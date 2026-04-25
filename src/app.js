@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
+// عرض ملفات الموقع
+app.use(express.static(path.join(__dirname, "../renderer")));
 const authRoutes = require("./routes/auth.routes");
 const dashboardRoutes = require("./routes/dashboard.routes");
 const patientsRoutes = require("./routes/patients.routes");
@@ -50,4 +52,7 @@ app.use("/api/suppliers", suppliersRoutes);
 app.use("/api/supplier-purchases", supplierPurchasesRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api", backupRoutes);
+app.get("/booking", (req, res) => {
+  res.sendFile(path.join(__dirname, "../renderer/booking.html"));
+});
 module.exports = app; 
