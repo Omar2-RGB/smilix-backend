@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smilix Treatments</title>
+  <style>
+    :root {
+      --bg-1: #07121d;
+      --bg-2: #0d2233;
+      --panel: rgba(255,255,255,0.06);
+      --line: rgba(255,255,255,0.08);
+      --text: #eef8ff;
+      --muted: #9db6ca;
+      --primary: #35a8ff;
+      --primary-2: #2ce0c7;
+      --danger: #ff7b9c;
+      --success: #36d399;
+      --warning: #ffb84d;
+      --shadow: 0 20px 50px rgba(0,0,0,0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(53,168,255,0.18), transparent 24%),
+        radial-gradient(circle at 85% 15%, rgba(44,224,199,0.10), transparent 20%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      color: var(--text);
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .tooth-treatment-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .tooth-treatment-item h4 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .tooth-treatment-item p {
+      margin: 4px 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 16px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 16px;
+    }
+
+    .topbar,
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar {
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      border: none;
+      color: white;
+      font-weight: 700;
+    }
+
+    .panel {
+      padding: 18px;
+      overflow: auto;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 14px;
+    }
+
+    .sum-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .sum-card h4 {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .sum-card p {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .teeth-board {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 10px;
+      justify-items: center;
+    }
+
+    .arch {
+      position: relative;
+      width: 900px;
+      max-width: 100%;
+      height: 75px;
+      overflow: visible;
+      margin: auto;
+    }
+
+    .upper-arch {
+      margin-bottom: 0px;
+    }
+
+    .lower-arch {
+      margin-top: 0px;
+    }
+
+    .tooth {
+      position: absolute;
+      width: 52px;
+      height: 72px;
+      cursor: pointer;
+    }
+
+    .tooth-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,0.18));
+      transition: transform 0.2s ease, filter 0.2s ease;
+      transform-origin: center center;
+    }
+
+    .tooth:hover .tooth-svg {
+      transform: scale(1.05);
+      filter: brightness(1.08) drop-shadow(0 10px 20px rgba(0,0,0,0.22));
+    }
+
+    .tooth-svg path {
+      fill: rgba(255,255,255,0.08);
+      stroke: rgba(255,255,255,0.22);
+      stroke-width: 2;
+      transition: 0.2s ease;
+    }
+
+    .tooth span {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      font-weight: 800;
+      color: white;
+      pointer-events: none;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.35);
+    }
+
+    .tooth.empty path {
+      fill: rgba(255,255,255,0.08);
+    }
+
+    .tooth.active path {
+      fill: #35a8ff;
+    }
+
+    .tooth.completed path {
+      fill: #36d399;
+    }
+
+    .tooth.planned path {
+      fill: #ffb84d;
+    }
+
+    .tooth.cancelled path {
+      fill: #ff7b9c;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-top: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1000px;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 14px;
+    }
+
+    th {
+      background: rgba(255,255,255,0.04);
+      color: #dcefff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .action-cell {
+      display: flex;
+      gap: 8px;
+    }
+
+    .mini-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 12px;
+    }
+
+    .edit-btn {
+      background: #2f86ff;
+    }
+
+    .delete-btn {
+      background: #ff5f7c;
+    }
+
+    .status-badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .status-planned {
+      background: rgba(255,184,77,0.16);
+      color: #ffd387;
+    }
+
+    .status-in_progress {
+      background: rgba(53,168,255,0.16);
+      color: #9dd6ff;
+    }
+
+    .status-completed {
+      background: rgba(54,211,153,0.16);
+      color: #8ff0c0;
+    }
+
+    .status-cancelled {
+      background: rgba(255,123,156,0.16);
+      color: #ffb2c4;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 760px;
+      background: #102638;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 13px;
+      color: #dcefff;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      height: 46px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      padding: 0 12px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .field textarea {
+      height: 100px;
+      resize: vertical;
+      padding-top: 12px;
+    }
+
+    .modal-actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-start;
+    }
+
+    @media (max-width: 1400px) {
+      .summary-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .arch {
+        width: 760px;
+        height: 160px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .arch {
+        width: 620px;
+        height: 150px;
+      }
+
+      .tooth {
+        width: 46px;
+        height: 64px;
+      }
+    }
+    .field select,
+select {
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  padding: 0 12px;
+  outline: none;
+  font-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.field select option,
+select option {
+  background-color: #102638;
+  color: #eef8ff;
+}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div>
+        <h2 id="pageTitle">علاجات المريض</h2>
+        <p>عرض وإدارة جلسات العلاج المرتبطة بهذا المريض.</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn" onclick="goBack()">رجوع</button>
+        <button class="btn" onclick="openPaymentModal()">الدفعات</button>
+        <button class="btn primary" onclick="openCreateModal()">+ إضافة علاج</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="summary-grid">
+        <div class="sum-card">
+          <h4>إجمالي العلاجات</h4>
+          <p id="totalTreatments">0</p>
+        </div>
+        <div class="sum-card">
+          <h4>مكتملة</h4>
+          <p id="completedTreatments">0</p>
+        </div>
+        <div class="sum-card">
+          <h4>قيد التنفيذ</h4>
+          <p id="inProgressTreatments">0</p>
+        </div>
+        <div class="sum-card">
+          <h4>إجمالي التكلفة</h4>
+          <p id="totalCost">$0</p>
+        </div>
+        <div class="sum-card">
+          <h4>إجمالي المدفوع</h4>
+          <p id="paidTotalValue">$0</p>
+        </div>
+        <div class="sum-card">
+          <h4>الباقي</h4>
+          <p id="remainingTotalValue">$0</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 style="margin-top:0;">خريطة الأسنان</h3>
+
+      <div class="teeth-board">
+        <div class="arch upper-arch" id="upperTeeth"></div>
+        <div class="arch lower-arch" id="lowerTeeth"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>التاريخ</th>
+              <th>نوع العلاج</th>
+              <th>رقم السن</th>
+              <th>السعر</th>
+              <th>الحالة</th>
+              <th>ملاحظات</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="treatmentsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="toothDetailsModal" class="modal-backdrop">
+    <div class="modal" style="max-width: 680px;">
+      <div class="modal-head">
+        <h3 id="toothDetailsTitle">تفاصيل السن</h3>
+        <button class="close-btn" onclick="closeToothDetails()">×</button>
+      </div>
+
+      <div class="form-grid" style="margin-bottom: 18px;">
+        <div class="field">
+          <label>رقم السن</label>
+          <input id="detailToothNumber" type="text" readonly />
+        </div>
+
+        <div class="field">
+          <label>اسم السن</label>
+          <input id="detailToothName" type="text" readonly />
+        </div>
+
+        <div class="field">
+          <label>عدد العلاجات</label>
+          <input id="detailToothTreatmentsCount" type="text" readonly />
+        </div>
+
+        <div class="field">
+          <label>إجمالي التكلفة</label>
+          <input id="detailToothTotalCost" type="text" readonly />
+        </div>
+      </div>
+
+      <div>
+        <h4 style="margin:0 0 12px;">سجل علاجات هذا السن</h4>
+        <div id="toothTreatmentsList" style="display:grid; gap:12px;"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn primary" id="addTreatmentForToothBtn">+ إضافة علاج لهذا السن</button>
+        <button class="btn" onclick="closeToothDetails()">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="treatmentModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">إضافة علاج</h3>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>نوع العلاج</label>
+          <select id="treatmentTypeId"></select>
+        </div>
+
+        <div class="field">
+          <label>رقم السن</label>
+          <input id="toothNumber" type="text" />
+        </div>
+
+        <div class="field">
+          <label>السعر</label>
+          <input id="price" type="number" step="0.01" />
+        </div>
+
+        <div class="field">
+          <label>الحالة</label>
+          <select id="status">
+            <option value="planned">مخطط</option>
+            <option value="in_progress">قيد التنفيذ</option>
+            <option value="completed">مكتمل</option>
+            <option value="cancelled">ملغي</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>التاريخ</label>
+          <input id="sessionDate" type="date" />
+        </div>
+
+        <div class="field full">
+          <label>ملاحظات</label>
+          <textarea id="notes"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn primary" onclick="saveTreatment()">حفظ</button>
+        <button class="btn" onclick="closeModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="paymentModal" class="modal-backdrop">
+    <div class="modal" style="max-width:520px;">
+      <div class="modal-head">
+        <h3>إضافة دفعة</h3>
+        <button class="close-btn" onclick="closePaymentModal()">×</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>إجمالي الحساب</label>
+          <input id="paymentTotal" type="number" readonly />
+        </div>
+
+        <div class="field">
+          <label>إجمالي المدفوع</label>
+          <input id="paymentPaid" type="number" readonly />
+        </div>
+
+        <div class="field">
+          <label>الدفعة الجديدة</label>
+          <input id="paymentAmount" type="number" step="0.01" oninput="updateRemainingPreview()" />
+        </div>
+
+        <div class="field">
+          <label>الباقي بعد الدفع</label>
+          <input id="paymentRemaining" type="number" readonly />
+        </div>
+
+        <div class="field">
+          <label>طريقة الدفع</label>
+          <select id="paymentMethod">
+            <option value="cash">كاش</option>
+            <option value="card">بطاقة</option>
+            <option value="transfer">تحويل</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>ملاحظات</label>
+          <textarea id="paymentNotes"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn primary" onclick="savePayment()">حفظ الدفعة</button>
+        <button class="btn" onclick="closePaymentModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const permissions = {
+      admin: ["dashboard", "patients", "appointments", "treatments", "payments", "invoices", "users"],
+      doctor: ["dashboard", "patients", "appointments", "treatments"],
+      receptionist: ["dashboard", "patients", "appointments"],
+      accountant: ["dashboard", "payments", "invoices"]
+    };
+
+    function getCurrentUser() {
+      return JSON.parse(localStorage.getItem("user") || "null");
+    }
+
+    function getUserRole() {
+      const user = getCurrentUser();
+      if (!user) return null;
+
+      if (user.role?.name) return user.role.name.toLowerCase();
+      if (typeof user.role === "string") return user.role.toLowerCase();
+
+      return null;
+    }
+
+    function canAccess(page) {
+      const role = getUserRole();
+      if (!role) return false;
+
+      const allowedPages = permissions[role] || [];
+      return allowedPages.includes(page);
+    }
+
+    function protectPage(page) {
+      if (!canAccess(page)) {
+        alert("ما عندك صلاحية للدخول إلى هذه الصفحة");
+        window.location.href = "dashboard.html";
+      }
+    }
+
+    function hideNavIfNoAccess(elementId, page) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+
+      if (!canAccess(page)) {
+        element.style.display = "none";
+      }
+    }
+
+    function applySidebarPermissions() {
+      hideNavIfNoAccess("nav-dashboard", "dashboard");
+      hideNavIfNoAccess("nav-patients", "patients");
+      hideNavIfNoAccess("nav-appointments", "appointments");
+      hideNavIfNoAccess("nav-treatments", "treatments");
+      hideNavIfNoAccess("nav-payments", "payments");
+      hideNavIfNoAccess("nav-invoices", "invoices");
+      hideNavIfNoAccess("nav-users", "users");
+    }
+  </script>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (!token || !user) {
+      window.location.href = "login.html";
+    }
+
+    protectPage("treatments");
+
+    const params = new URLSearchParams(window.location.search);
+    const patientId = params.get("patientId");
+
+    if (!patientId) {
+      alert("رقم المريض غير موجود");
+      window.location.href = "patients.html";
+    }
+
+    let editingTreatmentId = null;
+    let treatmentTypes = [];
+    let patientTreatments = [];
+    let selectedToothNumber = null;
+    let patientTotalAmount = 0;
+    let patientPaidAmount = 0;
+
+    function goBack() {
+      window.history.back();
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "-";
+
+      const date = new Date(dateString);
+
+      return date.toLocaleDateString("ar-EG", {
+        weekday: "long",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    }
+
+    function getStatusText(status) {
+      switch (status) {
+        case "planned": return "مخطط";
+        case "in_progress": return "قيد التنفيذ";
+        case "completed": return "مكتمل";
+        case "cancelled": return "ملغي";
+        default: return status || "-";
+      }
+    }
+
+    function getToothName(toothNo) {
+      const map = {
+        18: "ضرس العقل العلوي الأيمن",
+        17: "الضرس الثاني العلوي الأيمن",
+        16: "الضرس الأول العلوي الأيمن",
+        15: "الضاحك الثاني",
+        14: "الضاحك الأول",
+        13: "الناب",
+        12: "القاطع الجانبي",
+        11: "القاطع المركزي",
+        21: "القاطع المركزي",
+        22: "القاطع الجانبي",
+        23: "الناب",
+        24: "الضاحك الأول",
+        25: "الضاحك الثاني",
+        26: "الضرس الأول",
+        27: "الضرس الثاني",
+        28: "ضرس العقل",
+        31: "القاطع المركزي السفلي",
+        32: "القاطع الجانبي",
+        33: "الناب",
+        34: "الضاحك الأول",
+        35: "الضاحك الثاني",
+        36: "الضرس الأول",
+        37: "الضرس الثاني",
+        38: "ضرس العقل",
+        41: "القاطع المركزي",
+        42: "القاطع الجانبي",
+        43: "الناب",
+        44: "الضاحك الأول",
+        45: "الضاحك الثاني",
+        46: "الضرس الأول",
+        47: "الضرس الثاني",
+        48: "ضرس العقل"
+      };
+
+      return map[toothNo] || "";
+    }
+
+    function getToothType(toothNo) {
+      const n = String(toothNo);
+
+      if (["11","12","21","22","31","32","41","42"].includes(n)) return "incisor";
+      if (["13","23","33","43"].includes(n)) return "canine";
+      if (["14","15","24","25","34","35","44","45"].includes(n)) return "premolar";
+      return "molar";
+    }
+
+    function getToothSVG(type, toothNo) {
+      const svgs = {
+        incisor: `
+          <svg viewBox="0 0 64 88" class="tooth-svg">
+            <path d="M22 8
+                     C16 8, 11 13, 10 21
+                     C9 29, 12 37, 16 46
+                     C20 55, 21 74, 27 78
+                     C31 80, 31 61, 32 54
+                     C33 61, 33 80, 37 78
+                     C43 74, 44 55, 48 46
+                     C52 37, 55 29, 54 21
+                     C53 13, 48 8, 42 8 Z"/>
+          </svg>
+        `,
+        canine: `
+          <svg viewBox="0 0 64 88" class="tooth-svg">
+            <path d="M21 8
+                     C14 9, 10 15, 10 23
+                     C10 34, 14 42, 18 50
+                     C21 56, 22 73, 28 79
+                     C31 82, 31 60, 32 52
+                     C33 60, 33 82, 36 79
+                     C42 73, 43 56, 46 50
+                     C50 42, 54 34, 54 23
+                     C54 15, 50 9, 43 8
+                     C39 8, 36 10, 32 14
+                     C28 10, 25 8, 21 8 Z"/>
+          </svg>
+        `,
+        premolar: `
+          <svg viewBox="0 0 64 88" class="tooth-svg">
+            <path d="M18 8
+                     C11 8, 8 14, 8 23
+                     C8 34, 12 42, 16 50
+                     C19 56, 19 74, 26 78
+                     C30 80, 31 61, 32 54
+                     C33 61, 34 80, 38 78
+                     C45 74, 45 56, 48 50
+                     C52 42, 56 34, 56 23
+                     C56 14, 53 8, 46 8
+                     C41 8, 36 11, 32 15
+                     C28 11, 23 8, 18 8 Z"/>
+          </svg>
+        `,
+        molar: `
+          <svg viewBox="0 0 64 88" class="tooth-svg">
+            <path d="M16 8
+                     C9 8, 6 14, 6 23
+                     C6 34, 10 42, 14 50
+                     C17 56, 17 73, 24 78
+                     C29 81, 30 61, 31 54
+                     C32 61, 33 81, 38 78
+                     C45 73, 45 56, 48 50
+                     C52 42, 58 34, 58 23
+                     C58 14, 55 8, 48 8
+                     C43 8, 38 11, 34 14
+                     C33 12, 31 12, 30 14
+                     C26 11, 21 8, 16 8 Z"/>
+          </svg>
+        `
+      };
+
+      return `
+        ${svgs[type]}
+        <span title="${getToothName(toothNo)}">${toothNo}</span>
+      `;
+    }
+
+    function createTooth(toothNo) {
+      const div = document.createElement("div");
+      div.className = "tooth empty";
+      div.dataset.tooth = toothNo;
+
+      const toothType = getToothType(toothNo);
+      div.innerHTML = getToothSVG(toothType, toothNo);
+
+      const related = patientTreatments.filter(
+        t => String(t.toothNumber) === String(toothNo)
+      );
+
+      if (related.length) {
+        const latest = related[0];
+
+        div.classList.remove("empty");
+
+        if (latest.status === "completed") div.classList.add("completed");
+        else if (latest.status === "planned") div.classList.add("planned");
+        else if (latest.status === "cancelled") div.classList.add("cancelled");
+        else div.classList.add("active");
+
+        if (latest.treatmentType?.colorHex) {
+          div.querySelector("path").style.fill = latest.treatmentType.colorHex;
+        }
+
+        div.title = `${latest.treatmentType?.name || "Treatment"} - ${getToothName(toothNo)}`;
+      }
+
+      div.addEventListener("click", () => {
+        openToothDetails(toothNo);
+      });
+
+      return div;
+    }
+
+    function positionToothOnArch(element, index, total, archType) {
+      const archWidth = 900;
+      const centerX = archWidth / 2;
+      const radiusX = 360;
+      const radiusY = 85;
+
+      const angleStart = archType === "upper" ? 210 : 150;
+      const angleEnd = archType === "upper" ? 330 : 30;
+
+      let angle;
+
+      if (archType === "upper") {
+        angle = angleStart + ((angleEnd - angleStart) * index) / (total - 1);
+      } else {
+        angle = angleStart - ((angleStart - angleEnd) * index) / (total - 1);
+      }
+
+      const rad = (angle * Math.PI) / 180;
+
+      const x = centerX + radiusX * Math.cos(rad) - 26;
+      const yBase = archType === "upper" ? 78 : 12;
+      const yCurve = radiusY * Math.sin(rad);
+      const y = archType === "upper" ? yBase + yCurve : 96 - yCurve;
+
+      element.style.left = `${x}px`;
+      element.style.top = `${y}px`;
+
+      const rotate = archType === "upper" ? angle - 270 : angle - 90;
+      element.style.transform = `rotate(${rotate}deg)`;
+
+      const label = element.querySelector("span");
+      if (label) {
+        label.style.transform = `translateX(-50%) rotate(${-rotate}deg)`;
+      }
+    }
+
+    function renderTeeth() {
+      const upper = ["18","17","16","15","14","13","12","11","21","22","23","24","25","26","27","28"];
+      const lower = ["48","47","46","45","44","43","42","41","31","32","33","34","35","36","37","38"];
+
+      const upperBox = document.getElementById("upperTeeth");
+      const lowerBox = document.getElementById("lowerTeeth");
+
+      upperBox.innerHTML = "";
+      lowerBox.innerHTML = "";
+
+      upper.forEach((toothNo, index) => {
+        const tooth = createTooth(toothNo);
+        positionToothOnArch(tooth, index, upper.length, "upper");
+        upperBox.appendChild(tooth);
+      });
+
+      lower.forEach((toothNo, index) => {
+        const tooth = createTooth(toothNo);
+        positionToothOnArch(tooth, index, lower.length, "lower");
+        lowerBox.appendChild(tooth);
+      });
+    }
+
+    function closeToothDetails() {
+      document.getElementById("toothDetailsModal").classList.remove("show");
+    }
+
+    function openToothDetails(toothNo) {
+      selectedToothNumber = String(toothNo);
+
+      const toothTreatments = patientTreatments.filter(
+        t => String(t.toothNumber) === String(toothNo)
+      );
+
+      const totalCost = toothTreatments.reduce(
+        (sum, t) => sum + Number(t.price || 0),
+        0
+      );
+
+      document.getElementById("detailToothNumber").value = toothNo;
+      document.getElementById("detailToothName").value = getToothName(toothNo);
+      document.getElementById("detailToothTreatmentsCount").value = toothTreatments.length;
+      document.getElementById("detailToothTotalCost").value = `$${totalCost.toFixed(2)}`;
+
+      const list = document.getElementById("toothTreatmentsList");
+      list.innerHTML = "";
+
+      if (!toothTreatments.length) {
+        list.innerHTML = `
+          <div class="tooth-treatment-item">
+            <h4>لا توجد علاجات لهذا السن</h4>
+            <p>يمكنك إضافة أول علاج مباشرة من هنا.</p>
+          </div>
+        `;
+      } else {
+        toothTreatments.forEach((item) => {
+          list.innerHTML += `
+            <div class="tooth-treatment-item">
+              <h4>${item.treatmentType?.name || "-"}</h4>
+              <p>التاريخ: ${formatDate(item.sessionDate)}</p>
+              <p>الحالة: ${getStatusText(item.status)}</p>
+              <p>السعر: $${Number(item.price || 0).toFixed(2)}</p>
+              <p>ملاحظات: ${item.notes || "-"}</p>
+            </div>
+          `;
+        });
+      }
+
+      document.getElementById("addTreatmentForToothBtn").onclick = () => {
+        closeToothDetails();
+        openCreateModal(toothNo);
+      };
+
+      document.getElementById("toothDetailsModal").classList.add("show");
+    }
+
+    async function loadPatientInfo() {
+      const res = await fetch(`http://127.0.0.1:5000/api/patients/${patientId}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) throw new Error("Failed to load patient");
+
+      const patient = await res.json();
+      document.getElementById("pageTitle").textContent = `علاجات المريض - ${patient.fullName}`;
+    }
+
+    async function loadTreatmentTypes() {
+      const res = await fetch("http://127.0.0.1:5000/api/treatments/types", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) throw new Error("Failed to load treatment types");
+
+      treatmentTypes = await res.json();
+
+      const select = document.getElementById("treatmentTypeId");
+      select.innerHTML = `<option value="">اختر نوع العلاج</option>`;
+
+      treatmentTypes.forEach(type => {
+        select.innerHTML += `<option value="${type.id}" data-price="${type.defaultPrice}" data-color="${type.colorHex}">${type.name}</option>`;
+      });
+
+      select.addEventListener("change", () => {
+        const selected = treatmentTypes.find(t => String(t.id) === String(select.value));
+        if (selected && !editingTreatmentId) {
+          document.getElementById("price").value = selected.defaultPrice || 0;
+        }
+      });
+    }
+
+    async function loadPatientPayments(patientId) {
+      try {
+        const res = await fetch(`http://127.0.0.1:5000/api/payments?patientId=${patientId}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error("Failed to load payments");
+
+        const payments = await res.json();
+
+        patientPaidAmount = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
+
+        document.getElementById("paidTotalValue").textContent = `$${patientPaidAmount.toFixed(2)}`;
+        document.getElementById("remainingTotalValue").textContent = `$${(patientTotalAmount - patientPaidAmount).toFixed(2)}`;
+      } catch (error) {
+        console.error("Load patient payments error:", error);
+        patientPaidAmount = 0;
+        document.getElementById("paidTotalValue").textContent = "$0.00";
+        document.getElementById("remainingTotalValue").textContent = `$${patientTotalAmount.toFixed(2)}`;
+      }
+    }
+
+    async function loadTreatments() {
+      const res = await fetch(`http://127.0.0.1:5000/api/treatments/patient/${patientId}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) throw new Error("Failed to load treatments");
+
+      patientTreatments = await res.json();
+
+      const totalCost = patientTreatments.reduce((sum, t) => sum + Number(t.price || 0), 0);
+      patientTotalAmount = totalCost;
+
+      document.getElementById("totalTreatments").textContent = patientTreatments.length;
+      document.getElementById("completedTreatments").textContent =
+        patientTreatments.filter(t => t.status === "completed").length;
+      document.getElementById("inProgressTreatments").textContent =
+        patientTreatments.filter(t => t.status === "in_progress").length;
+      document.getElementById("totalCost").textContent = "$" + totalCost.toFixed(2);
+
+      const tableBody = document.getElementById("treatmentsTableBody");
+      tableBody.innerHTML = "";
+
+      patientTreatments.forEach(item => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td>${formatDate(item.sessionDate)}</td>
+          <td>${item.treatmentType?.name || "-"}</td>
+          <td>${item.toothNumber || "-"}</td>
+          <td>${Number(item.price || 0).toFixed(2)}</td>
+          <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
+          <td>${item.notes || "-"}</td>
+          <td>
+            <div class="action-cell">
+              <button class="mini-btn edit-btn">تعديل</button>
+              <button class="mini-btn delete-btn">حذف</button>
+            </div>
+          </td>
+        `;
+
+        tr.querySelector(".edit-btn").addEventListener("click", () => openEditModal(item));
+        tr.querySelector(".delete-btn").addEventListener("click", () => deleteTreatment(item.id));
+
+        tableBody.appendChild(tr);
+      });
+
+      renderTeeth();
+      await loadPatientPayments(patientId);
+    }
+
+    function openCreateModal(toothNo = "") {
+      editingTreatmentId = null;
+      document.getElementById("modalTitle").textContent = "إضافة علاج";
+      resetForm();
+      document.getElementById("toothNumber").value = toothNo;
+      document.getElementById("treatmentModal").classList.add("show");
+    }
+
+    function openEditModal(item) {
+      editingTreatmentId = item.id;
+      document.getElementById("modalTitle").textContent = "تعديل علاج";
+
+      document.getElementById("treatmentTypeId").value = item.treatmentTypeId || "";
+      document.getElementById("toothNumber").value = item.toothNumber || "";
+      document.getElementById("price").value = item.price || 0;
+      document.getElementById("status").value = item.status || "planned";
+      document.getElementById("sessionDate").value = item.sessionDate ? item.sessionDate.split("T")[0] : "";
+      document.getElementById("notes").value = item.notes || "";
+
+      document.getElementById("treatmentModal").classList.add("show");
+    }
+
+    function closeModal() {
+      document.getElementById("treatmentModal").classList.remove("show");
+    }
+
+    function resetForm() {
+      document.getElementById("treatmentTypeId").value = "";
+      document.getElementById("toothNumber").value = "";
+      document.getElementById("price").value = 0;
+      document.getElementById("status").value = "planned";
+      document.getElementById("sessionDate").value = new Date().toISOString().split("T")[0];
+      document.getElementById("notes").value = "";
+    }
+
+    function openPaymentModal() {
+      document.getElementById("paymentTotal").value = patientTotalAmount.toFixed(2);
+      document.getElementById("paymentPaid").value = patientPaidAmount.toFixed(2);
+      document.getElementById("paymentAmount").value = "";
+      document.getElementById("paymentRemaining").value = (patientTotalAmount - patientPaidAmount).toFixed(2);
+      document.getElementById("paymentMethod").value = "cash";
+      document.getElementById("paymentNotes").value = "";
+      document.getElementById("paymentModal").classList.add("show");
+    }
+
+    function closePaymentModal() {
+      document.getElementById("paymentModal").classList.remove("show");
+    }
+
+    function updateRemainingPreview() {
+      const amount = Number(document.getElementById("paymentAmount").value || 0);
+      const remaining = patientTotalAmount - patientPaidAmount - amount;
+      document.getElementById("paymentRemaining").value = remaining.toFixed(2);
+    }
+
+    async function savePayment() {
+      try {
+        const amount = Number(document.getElementById("paymentAmount").value || 0);
+        const paymentMethod = document.getElementById("paymentMethod").value;
+        const notes = document.getElementById("paymentNotes").value.trim();
+
+        if (!amount || amount <= 0) {
+          alert("أدخل مبلغ دفعة صحيح");
+          return;
+        }
+
+        const remainingBefore = patientTotalAmount - patientPaidAmount;
+        if (amount > remainingBefore) {
+          alert("الدفعة أكبر من المبلغ المتبقي");
+          return;
+        }
+
+        const payload = {
+          patientId: Number(patientId),
+          amount,
+          paymentMethod,
+          notes
+        };
+
+        const res = await fetch("http://127.0.0.1:5000/api/payments", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Failed to save payment");
+
+        closePaymentModal();
+        await loadPatientPayments(patientId);
+        alert("تمت إضافة الدفعة بنجاح");
+      } catch (error) {
+        console.error("Save payment error:", error);
+        alert("تعذر حفظ الدفعة");
+      }
+    }
+
+    async function saveTreatment() {
+      try {
+        const payload = {
+          patientId,
+          treatmentTypeId: document.getElementById("treatmentTypeId").value,
+          toothNumber: document.getElementById("toothNumber").value,
+          price: document.getElementById("price").value,
+          status: document.getElementById("status").value,
+          sessionDate: document.getElementById("sessionDate").value,
+          notes: document.getElementById("notes").value,
+        };
+
+        if (!payload.treatmentTypeId || !payload.sessionDate) {
+          alert("نوع العلاج والتاريخ مطلوبان");
+          return;
+        }
+
+        const method = editingTreatmentId ? "PUT" : "POST";
+        const url = editingTreatmentId
+          ? `http://127.0.0.1:5000/api/treatments/${editingTreatmentId}`
+          : `http://127.0.0.1:5000/api/treatments`;
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Failed to save treatment");
+
+        closeModal();
+        await loadTreatments();
+      } catch (error) {
+        console.error("Save treatment error:", error);
+        alert("تعذر حفظ العلاج");
+      }
+    }
+
+    async function deleteTreatment(id) {
+      const confirmed = confirm("هل أنت متأكد من حذف العلاج؟");
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch(`http://127.0.0.1:5000/api/treatments/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to delete treatment");
+
+        await loadTreatments();
+      } catch (error) {
+        console.error("Delete treatment error:", error);
+        alert("تعذر حذف العلاج");
+      }
+    }
+
+    async function initPage() {
+      try {
+        applySidebarPermissions();
+        await loadPatientInfo();
+        await loadTreatmentTypes();
+        await loadTreatments();
+      } catch (error) {
+        console.error("Treatments page init error:", error);
+        alert("تعذر تحميل صفحة العلاجات");
+      }
+    }
+
+    initPage();
+  </script>
+</body>
+</html>

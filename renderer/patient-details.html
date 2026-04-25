@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smilix Patient Details</title>
+  <style>
+    :root {
+      --bg-1: #07121d;
+      --bg-2: #0d2233;
+      --panel: rgba(255,255,255,0.06);
+      --line: rgba(255,255,255,0.08);
+      --text: #eef8ff;
+      --muted: #9db6ca;
+      --primary: #35a8ff;
+      --primary-2: #2ce0c7;
+      --danger: #ff7b9c;
+      --shadow: 0 20px 50px rgba(0,0,0,0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(53,168,255,0.18), transparent 24%),
+        radial-gradient(circle at 85% 15%, rgba(44,224,199,0.10), transparent 20%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      color: var(--text);
+      overflow-x: hidden;
+      overflow-y: auto;    }
+
+    .page {
+      height: 100vh;
+      padding: 16px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+    }
+
+    .topbar, .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar {
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      border: none;
+      color: white;
+      font-weight: 700;
+    }
+
+    .btn.danger {
+      background: linear-gradient(135deg, var(--danger), #ff5f7c);
+      border: none;
+      color: white;
+      font-weight: 700;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .panel {
+      padding: 18px;
+      overflow: auto;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 22px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .info-card, .file-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .info-card h4, .file-card h4 {
+      margin: 0 0 8px;
+      font-size: 15px;
+    }
+
+    .info-card p, .file-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .upload-box {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .input, .select {
+      width: 100%;
+      height: 46px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      padding: 0 12px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .files-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .file-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 12px;
+    }
+
+    .view-btn {
+      background: #2f86ff;
+    }
+
+    .delete-btn {
+      background: #ff5f7c;
+    }
+
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 24px;
+    }
+
+    @media (max-width: 1000px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+    .field select,
+select {
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  padding: 0 12px;
+  outline: none;
+  font-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.field select option,
+select option {
+  background-color: #102638;
+  color: #eef8ff;
+}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div>
+        <h2 id="pageTitle">ملف المريض</h2>
+        <p>عرض بيانات المريض، الصور، والملفات الطبية.</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn" onclick="goBack()">رجوع</button>
+        <button class="btn primary" onclick="goToTreatments()">العلاجات</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <section class="panel">
+        <h3 class="section-title">بيانات المريض</h3>
+        <div class="info-grid" id="patientInfo"></div>
+      </section>
+
+      <section class="panel">
+        <h3 class="section-title">الصور والملفات</h3>
+
+        <div class="upload-box">
+          <select id="fileCategory" class="select">
+            <option value="profile">صورة شخصية</option>
+            <option value="xray">صورة شعاعية</option>
+            <option value="document">مستند</option>
+          </select>
+
+          <input id="fileInput" class="input" type="file" />
+          <button class="btn primary" onclick="uploadFile()">رفع الملف</button>
+        </div>
+
+        <div class="files-list" id="filesList"></div>
+      </section>
+    </div>
+  </div>
+<script>
+  const permissions = {
+    admin: ["dashboard", "patients", "appointments", "treatments", "payments", "invoices", "users"],
+    doctor: ["dashboard", "patients", "appointments", "treatments"],
+    receptionist: ["dashboard", "patients", "appointments"],
+    accountant: ["dashboard", "payments", "invoices"]
+  };
+
+  function getCurrentUser() {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  }
+
+  function getUserRole() {
+    const user = getCurrentUser();
+    if (!user) return null;
+
+    if (user.role?.name) return user.role.name.toLowerCase();
+    if (typeof user.role === "string") return user.role.toLowerCase();
+
+    return null;
+  }
+
+  function canAccess(page) {
+    const role = getUserRole();
+    if (!role) return false;
+
+    const allowedPages = permissions[role] || [];
+    return allowedPages.includes(page);
+  }
+
+  function protectPage(page) {
+    if (!canAccess(page)) {
+      alert("ما عندك صلاحية للدخول إلى هذه الصفحة");
+      window.location.href = "dashboard.html";
+    }
+  }
+
+  function hideNavIfNoAccess(elementId, page) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+
+    if (!canAccess(page)) {
+      element.style.display = "none";
+    }
+  }
+
+  function applySidebarPermissions() {
+    hideNavIfNoAccess("nav-dashboard", "dashboard");
+    hideNavIfNoAccess("nav-patients", "patients");
+    hideNavIfNoAccess("nav-appointments", "appointments");
+    hideNavIfNoAccess("nav-treatments", "treatments");
+    hideNavIfNoAccess("nav-payments", "payments");
+    hideNavIfNoAccess("nav-invoices", "invoices");
+    hideNavIfNoAccess("nav-users", "users");
+  }
+</script>
+  <script>
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (!token || !user) {
+      window.location.href = "login.html";
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const patientId = params.get("id");
+
+    if (!patientId) {
+      alert("رقم المريض غير موجود");
+      window.location.href = "patients.html";
+    }
+
+    function goBack() {
+      window.location.href = "patients.html";
+    }
+
+    function goToTreatments() {
+      window.location.href = `treatments.html?patientId=${patientId}`;
+    }
+function formatDate(dateString) {
+  if (!dateString) return "-";
+
+  const date = new Date(dateString);
+
+  return date.toLocaleDateString("ar-EG", {
+    weekday: "long",   // اسم اليوم
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+}
+
+    function genderLabel(value) {
+      if (value === "male") return "ذكر";
+      if (value === "female") return "أنثى";
+      return "-";
+    }
+
+    async function loadPatient() {
+      try {
+        const res = await fetch(`http://127.0.0.1:5000/api/patients/${patientId}`, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error("Failed to load patient");
+
+        const patient = await res.json();
+
+        document.getElementById("pageTitle").textContent = `ملف المريض - ${patient.fullName}`;
+
+        document.getElementById("patientInfo").innerHTML = `
+          <div class="info-card">
+            <h4>الكود</h4>
+            <p>${patient.patientCode || "-"}</p>
+          </div>
+          <div class="info-card">
+            <h4>الاسم الكامل</h4>
+            <p>${patient.fullName || "-"}</p>
+          </div>
+          <div class="info-card">
+            <h4>الهاتف</h4>
+            <p>${patient.phone || "-"}</p>
+          </div>
+          <div class="info-card">
+            <h4>الجنس</h4>
+            <p>${genderLabel(patient.gender)}</p>
+          </div>
+          <div class="info-card">
+            <h4>تاريخ الميلاد</h4>
+            <p>${formatDate(patient.birthDate)}</p>
+          </div>
+          <div class="info-card">
+            <h4>العنوان</h4>
+            <p>${patient.address || "-"}</p>
+          </div>
+          <div class="info-card full">
+            <h4>ملاحظات</h4>
+            <p>${patient.notes || "-"}</p>
+          </div>
+        `;
+      } catch (error) {
+        console.error("Load patient error:", error);
+        alert("تعذر تحميل بيانات المريض");
+      }
+    }
+
+    async function loadFiles() {
+      try {
+        const res = await fetch(`http://127.0.0.1:5000/api/patient-files/${patientId}/files`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error("Failed to load files");
+
+        const files = await res.json();
+        const list = document.getElementById("filesList");
+        list.innerHTML = "";
+
+        if (!files.length) {
+          list.innerHTML = `<div class="empty">لا توجد ملفات بعد.</div>`;
+          return;
+        }
+
+        files.forEach((file) => {
+          const isImage = (file.fileType || "").startsWith("image/");
+          const preview = isImage
+            ? `<img src="http://127.0.0.1:5000${file.filePath}" style="width:100%;max-height:180px;object-fit:contain;border-radius:12px;margin-bottom:10px;">`
+            : "";
+
+          const categoryLabel =
+            file.category === "profile" ? "صورة شخصية" :
+            file.category === "xray" ? "صورة شعاعية" :
+            "مستند";
+
+          list.innerHTML += `
+            <div class="file-card">
+              ${preview}
+              <h4>${file.fileName}</h4>
+              <p>النوع: ${categoryLabel}</p>
+              <p>تاريخ الرفع: ${formatDate(file.uploadedAt)}</p>
+
+              <div class="file-actions">
+                <button class="mini-btn view-btn" onclick="window.open('http://127.0.0.1:5000${file.filePath}', '_blank')">عرض</button>
+                <button class="mini-btn delete-btn" onclick="deleteFile(${file.id})">حذف</button>
+              </div>
+            </div>
+          `;
+        });
+      } catch (error) {
+        console.error("Load files error:", error);
+        document.getElementById("filesList").innerHTML = `<div class="empty">تعذر تحميل الملفات.</div>`;
+      }
+    }
+
+    async function uploadFile() {
+      try {
+        const fileInput = document.getElementById("fileInput");
+        const category = document.getElementById("fileCategory").value;
+        const file = fileInput.files[0];
+
+        if (!file) {
+          alert("اختر ملفًا أولًا");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("category", category);
+
+        const res = await fetch(`http://127.0.0.1:5000/api/patient-files/${patientId}/files`, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || "Upload failed");
+        }
+
+        document.getElementById("fileInput").value = "";
+        loadFiles();
+      } catch (error) {
+        console.error("Upload file error:", error);
+        alert("تعذر رفع الملف");
+      }
+    }
+
+    async function deleteFile(fileId) {
+      const confirmed = confirm("هل أنت متأكد من حذف هذا الملف؟");
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch(`http://127.0.0.1:5000/api/patient-files/files/${fileId}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || "Delete failed");
+        }
+
+        loadFiles();
+      } catch (error) {
+        console.error("Delete file error:", error);
+        alert("تعذر حذف الملف");
+      }
+    }
+
+    loadPatient();
+    loadFiles();
+  </script>
+</body>
+</html>

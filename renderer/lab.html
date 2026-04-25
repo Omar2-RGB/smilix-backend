@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smilix Lab Orders</title>
+  <style>
+    :root {
+      --bg-1: #07121d;
+      --bg-2: #0d2233;
+      --panel: rgba(255,255,255,0.06);
+      --line: rgba(255,255,255,0.08);
+      --text: #eef8ff;
+      --muted: #9db6ca;
+      --primary: #35a8ff;
+      --primary-2: #2ce0c7;
+      --danger: #ff5f7c;
+      --success: #36d399;
+      --warning: #ffb84d;
+      --shadow: 0 20px 50px rgba(0,0,0,0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(53,168,255,0.18), transparent 24%),
+        radial-gradient(circle at 85% 15%, rgba(44,224,199,0.10), transparent 20%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      color: var(--text);
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .brand-logo {
+      width: 68px;
+      height: 68px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(53,168,255,0.25), rgba(44,224,199,0.14));
+      border: 1px solid rgba(255,255,255,0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .brand-logo img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav-title {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 0 12px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      height: 52px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(53,168,255,0.18), rgba(44,224,199,0.12));
+      border-color: rgba(53,168,255,0.22);
+      transform: translateY(-1px);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+    }
+
+    .logout-btn {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--danger), #ff5f7c);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .content {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      border: none;
+      color: white;
+      font-weight: 700;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 200px auto;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .search-input,
+    .filter-select {
+      height: 48px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      padding: 0 14px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-input::placeholder {
+      color: #9db6ca;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1250px;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    th {
+      background: rgba(255,255,255,0.04);
+      color: #dcefff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      white-space: nowrap;
+    }
+
+    td {
+      color: #eef8ff;
+    }
+
+    .action-cell {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 12px;
+    }
+
+    .edit-btn {
+      background: #2f86ff;
+    }
+
+    .delete-btn {
+      background: #ff5f7c;
+    }
+
+    .status-badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .status-sent {
+      background: rgba(255,184,77,0.16);
+      color: #ffd387;
+    }
+
+    .status-in_progress {
+      background: rgba(53,168,255,0.16);
+      color: #9dd6ff;
+    }
+
+    .status-ready {
+      background: rgba(54,211,153,0.16);
+      color: #8ff0c0;
+    }
+
+    .status-delivered {
+      background: rgba(255,255,255,0.14);
+      color: #ffffff;
+    }
+
+    .empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .note-cell {
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 700px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #102638;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 10px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+.form-grid {
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 12px;
+
+}
+    .field label {
+      font-size: 13px;
+      color: #9db6ca;
+    }
+.field input,
+
+.field select,
+
+.field textarea {
+
+  height: 42px;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+
+  padding: 0 12px;
+
+}
+
+.field textarea {
+
+  height: 80px;
+
+}
+
+.modal-actions {
+
+  margin-top: 14px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+}
+
+.modal-actions .btn {
+
+  flex: 1;
+}
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+    }
+
+    .progress-bar {
+
+  width: 100%;
+
+  height: 8px;
+
+  background: rgba(255,255,255,0.08);
+
+  border-radius: 6px;
+
+  overflow: hidden;
+
+}
+
+.progress-fill {
+
+  height: 100%;
+
+  background: linear-gradient(135deg,#36d399,#2ce0c7);
+
+  width: 0%;
+
+  transition: 0.3s;
+
+}
+
+.toast {
+
+  position: fixed;
+
+  bottom: 20px;
+
+  left: 20px;
+
+  background: #36d399;
+
+  padding: 12px 18px;
+
+  border-radius: 12px;
+
+  color: white;
+
+  font-weight: bold;
+
+  display: none;
+
+}
+
+.warning {
+
+  background: #ff5f7c;
+
+}
+
+.field select,
+select {
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  padding: 0 12px;
+  outline: none;
+  font-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.field select option,
+select option {
+  background-color: #102638;
+  color: #eef8ff;
+}
+input, select, textarea {
+  background: rgba(255,255,255,0.05) !important;
+  color: #eef8ff !important;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #9db6ca;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #35a8ff;
+  box-shadow: 0 0 0 2px rgba(53,168,255,0.2);
+}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="brand-logo">
+            <img src="assets/logo.png" alt="Smilix Logo" />
+          </div>
+          <div>
+            <h1>Smilix</h1>
+            <p>منصة إدارة عيادات الأسنان</p>
+          </div>
+        </div>
+
+        <div class="nav-title">القائمة الرئيسية</div>
+        <div class="nav">
+          <button class="nav-btn" onclick="goToDashboard()"><span>لوحة التحكم</span><span>🏠</span></button>
+          <button class="nav-btn" onclick="goToPatients()"><span>المرضى</span><span>👤</span></button>
+          <button class="nav-btn" onclick="goToAppointments()"><span>المواعيد</span><span>📅</span></button>
+          <button class="nav-btn" onclick="goToTreatments?.()"><span>العلاجات</span><span>🦷</span></button>
+          <button class="nav-btn active" onclick="goToLabOrders()"><span>المخبر</span><span>🧪</span></button>
+          <button class="nav-btn" onclick="goToInvoices()"><span>الفواتير</span><span>🧾</span></button>
+          <button class="nav-btn" onclick="goToPayments()"><span>الدفعات</span><span>💳</span></button>
+          <button class="nav-btn" onclick="goToUsers?.()"><span>المستخدمون</span><span>👨‍💼</span></button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="topbar">
+        <div>
+          <h2>طلبات المخبر</h2>
+          <p>إدارة وتتبع الأعمال المرسلة إلى المخبر.</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn" onclick="goBack()">رجوع</button>
+          <button class="btn primary" onclick="openCreateModal()">+ إضافة طلب مخبر</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="toolbar">
+          <input id="searchInput" class="search-input" type="text" placeholder="ابحث باسم المريض أو اسم المخبر أو نوع العمل أو رقم السن" />
+          <select id="statusFilter" class="filter-select">
+            <option value="">كل الحالات</option>
+            <option value="sent">مرسل</option>
+            <option value="in_progress">قيد التنفيذ</option>
+            <option value="ready">جاهز</option>
+            <option value="delivered">تم التسليم</option>
+          </select>
+          <button class="btn" onclick="loadLabOrders()">بحث</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>المريض</th>
+                <th>رقم السن</th>
+                <th>نوع العمل</th>
+                <th>اسم المخبر</th>
+                <th>تاريخ الإرسال</th>
+                <th>التاريخ المتوقع</th>
+                <th>تاريخ الاستلام</th>
+                <th>التكلفة</th>
+                <th>المدفوع</th>
+                <th>الباقي</th>
+                <th>دفع</th>
+                <th>الحالة</th>
+                <th>ملاحظات</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="labOrdersTableBody"></tbody>
+          </table>
+          <div id="emptyState" class="empty" style="display:none;">لا توجد طلبات مخبر بعد.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="labOrderModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">إضافة طلب مخبر</h3>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>المريض</label>
+          <select id="patientId"></select>
+        </div>
+
+        <div class="field">
+          <label>رقم السن</label>
+          <input id="toothNumber" type="text" />
+        </div>
+
+        <div class="field">
+          <label>نوع العمل</label>
+          <input id="workType" type="text" />
+        </div>
+
+        <div class="field">
+          <label>اسم المخبر</label>
+          <input id="labName" type="text" />
+        </div>
+
+        <div class="field">
+          <label>تاريخ الإرسال</label>
+          <input id="sentDate" type="date" />
+        </div>
+
+        <div class="field">
+          <label>التاريخ المتوقع</label>
+          <input id="expectedDate" type="date" />
+        </div>
+
+        <div class="field">
+          <label>تاريخ الاستلام</label>
+          <input id="receivedDate" type="date" />
+        </div>
+
+        <div class="field">
+          <label>التكلفة</label>
+          <input id="cost" type="number" step="0.01" />
+        </div>
+
+        <div class="field full">
+          <label>الحالة</label>
+          <select id="status">
+            <option value="sent">مرسل</option>
+            <option value="in_progress">قيد التنفيذ</option>
+            <option value="ready">جاهز</option>
+            <option value="delivered">تم التسليم</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>ملاحظات</label>
+          <textarea id="notes"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn primary" onclick="saveLabOrder()">حفظ</button>
+        <button class="btn" onclick="closeModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+<!-- 👇 بعد نهاية الصفحة -->
+
+<div id="toast" class="toast"></div>
+
+<!-- 💰 Modal الدفع -->
+
+<div id="payModal" class="modal-backdrop">
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <h3>دفع للمخبر</h3>
+
+      <button class="close-btn" onclick="closePayModal()">×</button>
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="field full">
+
+        <label>المبلغ</label>
+
+        <input id="payAmount" type="number" />
+
+      </div>
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn primary" onclick="confirmPay()">دفع</button>
+
+      <button class="btn" onclick="closePayModal()">إلغاء</button>
+
+    </div>
+
+  </div>
+
+</div>
+  <script>
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (!token || !user) {
+      window.location.href = "login.html";
+    }
+
+    const apiBase = "http://127.0.0.1:5000/api/lab-orders";
+    let editingLabOrderId = null;
+    let allPatients = [];
+
+    function goToDashboard() {
+      window.location.href = "dashboard.html";
+    }
+
+    function goToPatients() {
+      window.location.href = "patients.html";
+    }
+
+    function goToAppointments() {
+      window.location.href = "appointments.html";
+    }
+
+    function goToLabOrders() {
+      window.location.href = "lab.html";
+    }
+
+    function goBack() {
+      window.history.back();
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "-";
+      return new Date(dateString).toLocaleDateString("ar-EG", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      });
+    }
+
+    function getStatusText(status) {
+      switch (status) {
+        case "sent": return "مرسل";
+        case "in_progress": return "قيد التنفيذ";
+        case "ready": return "جاهز";
+        case "delivered": return "تم التسليم";
+        default: return status || "-";
+      }
+    }
+
+    async function loadPatientsForDropdown() {
+      const res = await fetch("http://127.0.0.1:5000/api/patients", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) throw new Error("Failed to load patients");
+
+      allPatients = await res.json();
+
+      const select = document.getElementById("patientId");
+      select.innerHTML = `<option value="">اختر المريض</option>`;
+
+      allPatients.forEach((patient) => {
+        select.innerHTML += `<option value="${patient.id}">${patient.fullName} - ${patient.phone || "-"}</option>`;
+      });
+    }
+
+    async function loadLabOrders() {
+      try {
+        const search = document.getElementById("searchInput").value.trim();
+        const status = document.getElementById("statusFilter").value;
+
+        const query = new URLSearchParams();
+        if (search) query.append("search", search);
+        if (status) query.append("status", status);
+
+        const res = await fetch(`${apiBase}?${query.toString()}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error("Failed to load lab orders");
+
+        const orders = await res.json();
+        const tableBody = document.getElementById("labOrdersTableBody");
+        const emptyState = document.getElementById("emptyState");
+
+        tableBody.innerHTML = "";
+
+        if (!orders.length) {
+          emptyState.style.display = "block";
+          return;
+        }
+
+        emptyState.style.display = "none";
+
+        orders.forEach((item) => {
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td>${item.patient?.fullName || "-"}</td>
+            <td>${item.toothNumber || "-"}</td>
+            <td>${item.workType || "-"}</td>
+            <td>${item.labName || "-"}</td>
+            <td>${formatDate(item.sentDate)}</td>
+            <td>${formatDate(item.dueDate)}</td>
+            <td>${formatDate(item.receiveDate)}</td>
+            <td>${item.cost ?? 0}</td>
+            <td>${item.paidAmount || 0}</td>
+            <td>${(item.cost || 0) - (item.paidAmount || 0)}</td>
+            <td><button onclick="payLab(${item.id})">💰 دفع</button></td>
+            <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
+            <td class="note-cell" title="${item.notes || "-"}">${item.notes || "-"}</td>
+            <td>
+              <div class="action-cell">
+                <button class="mini-btn edit-btn">تعديل</button>
+                <button class="mini-btn delete-btn">حذف</button>
+              </div>
+            </td>
+          `;
+
+          tr.querySelector(".edit-btn").addEventListener("click", () => openEditModal(item));
+          tr.querySelector(".delete-btn").addEventListener("click", () => deleteLabOrder(item.id));
+
+          tableBody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error("Load lab orders error:", error);
+        alert("تعذر تحميل طلبات المخبر");
+      }
+    }
+
+    function openCreateModal() {
+      editingLabOrderId = null;
+      document.getElementById("modalTitle").textContent = "إضافة طلب مخبر";
+      resetForm();
+      document.getElementById("labOrderModal").classList.add("show");
+    }
+
+    function openEditModal(item) {
+      editingLabOrderId = item.id;
+      document.getElementById("modalTitle").textContent = "تعديل طلب مخبر";
+
+      document.getElementById("patientId").value = item.patientId || "";
+      document.getElementById("toothNumber").value = item.toothNumber || "";
+      document.getElementById("workType").value = item.workType || "";
+      document.getElementById("labName").value = item.labName || "";
+      document.getElementById("sentDate").value = item.sendDate ? item.sendDate.split("T")[0] : "";
+      document.getElementById("expectedDate").value = item.dueDate ? item.dueDate.split("T")[0] : "";
+      document.getElementById("receivedDate").value = item.receiveDate ? item.receiveDate.split("T")[0] : "";
+      document.getElementById("cost").value = item.cost || 0;
+      document.getElementById("status").value = item.status || "sent";
+      document.getElementById("notes").value = item.notes || "";
+
+      document.getElementById("labOrderModal").classList.add("show");
+    }
+
+    function closeModal() {
+      document.getElementById("labOrderModal").classList.remove("show");
+    }
+
+    function resetForm() {
+      document.getElementById("patientId").value = "";
+      document.getElementById("toothNumber").value = "";
+      document.getElementById("workType").value = "";
+      document.getElementById("labName").value = "";
+      document.getElementById("sentDate").value = new Date().toISOString().split("T")[0];
+      document.getElementById("expectedDate").value = "";
+      document.getElementById("receivedDate").value = "";
+      document.getElementById("cost").value = 0;
+      document.getElementById("status").value = "sent";
+      document.getElementById("notes").value = "";
+    }
+
+    async function saveLabOrder() {
+      try {
+        const payload = {
+          patientId: document.getElementById("patientId").value,
+          toothNumber: document.getElementById("toothNumber").value,
+          workType: document.getElementById("workType").value,
+          labName: document.getElementById("labName").value,
+          sentDate: document.getElementById("sentDate").value,
+          expectedDate: document.getElementById("expectedDate").value,
+          receivedDate: document.getElementById("receivedDate").value,
+          cost: document.getElementById("cost").value,
+          status: document.getElementById("status").value,
+          notes: document.getElementById("notes").value
+        };
+
+        if (!payload.patientId || !payload.workType || !payload.labName || !payload.sentDate) {
+          alert("المريض ونوع العمل واسم المخبر وتاريخ الإرسال مطلوبة");
+          return;
+        }
+
+        const method = editingLabOrderId ? "PUT" : "POST";
+        const url = editingLabOrderId ? `${apiBase}/${editingLabOrderId}` : apiBase;
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Failed to save lab order");
+
+        closeModal();
+        loadLabOrders();
+      } catch (error) {
+        console.error("Save lab order error:", error);
+        alert("تعذر حفظ طلب المخبر");
+      }
+    }
+
+    async function deleteLabOrder(id) {
+      const confirmed = confirm("هل أنت متأكد من حذف طلب المخبر؟");
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch(`${apiBase}/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Failed to delete lab order");
+
+        loadLabOrders();
+      } catch (error) {
+        console.error("Delete lab order error:", error);
+        alert("تعذر حذف طلب المخبر");
+      }
+    }
+
+    document.getElementById("searchInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loadLabOrders();
+    });
+
+    async function initPage() {
+      try {
+        await loadPatientsForDropdown();
+        await loadLabOrders();
+      } catch (error) {
+        console.error("Lab page init error:", error);
+        alert("تعذر تحميل صفحة المخبر");
+      }
+    }
+let currentPayId = null;
+
+/* 🔥 Toast */
+
+function showToast(text, type="success") {
+
+  const toast = document.getElementById("toast");
+
+  toast.textContent = text;
+
+  toast.className = "toast " + (type === "error" ? "warning" : "");
+
+  toast.style.display = "block";
+
+  setTimeout(() => {
+
+    toast.style.display = "none";
+
+  }, 3000);
+
+}
+
+/* 💰 فتح مودال الدفع */
+
+function payLab(id) {
+
+  currentPayId = id;
+
+  document.getElementById("payAmount").value = "";
+
+  document.getElementById("payModal").classList.add("show");
+
+}
+
+function closePayModal() {
+
+  document.getElementById("payModal").classList.remove("show");
+
+}
+
+/* 💳 تنفيذ الدفع */
+
+async function confirmPay() {
+
+  const amount = Number(document.getElementById("payAmount").value);
+
+  if (!amount || amount <= 0) {
+
+    showToast("❌ أدخل مبلغ صحيح", "error");
+
+    return;
+
+  }
+
+  try {
+
+    const res = await fetch(`http://localhost:5000/api/lab-orders/${currentPayId}/pay`, {
+
+      method: "POST",
+
+      headers: {
+
+        "Content-Type": "application/json"
+
+      },
+
+      body: JSON.stringify({ amount })
+
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+
+      showToast(data.message || "خطأ", "error");
+
+      return;
+
+    }
+
+    showToast("✅ تم الدفع بنجاح");
+
+    closePayModal();
+
+    loadLabOrders();
+
+  } catch (err) {
+
+    showToast("❌ خطأ بالسيرفر", "error");
+
+  }
+
+}
+
+/* 📊 تعديل الجدول */
+
+async function loadLabOrders() {
+
+  try {
+
+    const res = await fetch(apiBase);
+
+    const orders = await res.json();
+
+    const tableBody = document.getElementById("labOrdersTableBody");
+
+    tableBody.innerHTML = "";
+
+    orders.forEach((item) => {
+
+      const remaining = (item.cost || 0) - (item.paidAmount || 0);
+
+      const percent = item.cost ? ((item.paidAmount || 0) / item.cost) * 100 : 0;
+
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+
+        <td>${item.patient?.fullName || "-"}</td>
+
+        <td>${item.toothNumber || "-"}</td>
+
+        <td>${item.workType || "-"}</td>
+
+        <td>${item.labName || "-"}</td>
+
+        <td>${formatDate(item.sentDate)}</td>
+
+        <td>${formatDate(item.dueDate)}</td>
+
+        <td>${formatDate(item.receiveDate)}</td>
+
+        <td>${item.cost ?? 0}</td>
+
+        <td>${item.paidAmount || 0}</td>
+
+        <td>${remaining}</td>
+
+        <td>
+
+          <button onclick="payLab(${item.id})">💰</button>
+
+        </td>
+
+        <td>
+
+          <div class="progress-bar">
+
+            <div class="progress-fill" style="width:${percent}%"></div>
+
+          </div>
+
+        </td>
+
+        <td>${getStatusText(item.status)}</td>
+
+        <td>
+
+          <button onclick="deleteLabOrder(${item.id})">❌</button>
+
+        </td>
+
+      `;
+
+      tableBody.appendChild(tr);
+
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+  }
+
+}
+    initPage();
+  </script>
+</body>
+</html>

@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smilix Appointments</title>
+  <style>
+    :root {
+      --bg-1: #07121d;
+      --bg-2: #0d2233;
+      --panel: rgba(255,255,255,0.06);
+      --line: rgba(255,255,255,0.08);
+      --text: #eef8ff;
+      --muted: #9db6ca;
+      --primary: #35a8ff;
+      --primary-2: #2ce0c7;
+      --danger: #ff7b9c;
+      --success: #36d399;
+      --warning: #ffb84d;
+      --shadow: 0 20px 50px rgba(0,0,0,0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(53,168,255,0.18), transparent 24%),
+        radial-gradient(circle at 85% 15%, rgba(44,224,199,0.10), transparent 20%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      color: var(--text);
+      overflow-x: hidden;
+      overflow-y: auto;
+
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      height: 100vh;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .brand-logo {
+      width: 68px;
+      height: 68px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(53,168,255,0.25), rgba(44,224,199,0.14));
+      border: 1px solid rgba(255,255,255,0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .brand-logo img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav-title {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 0 12px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      height: 52px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(53,168,255,0.18), rgba(44,224,199,0.12));
+      border-color: rgba(53,168,255,0.22);
+      transform: translateY(-1px);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+    }
+
+    .logout-btn {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--danger), #ff5f7c);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .content {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      border: none;
+      color: white;
+      font-weight: 700;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 180px 180px auto;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .search-input,
+    .filter-input,
+    .filter-select {
+      height: 48px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      padding: 0 14px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1100px;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 14px;
+    }
+
+    th {
+      background: rgba(255,255,255,0.04);
+      color: #dcefff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .action-cell {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mini-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 12px;
+    }
+
+    .edit-btn { background: #2f86ff; }
+    .delete-btn { background: #ff5f7c; }
+    .confirm-btn { background: #36d399; }
+
+    .status-badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .status-pending {
+      background: rgba(255,184,77,0.16);
+      color: #ffd387;
+    }
+
+    .status-confirmed {
+      background: rgba(53,168,255,0.16);
+      color: #9dd6ff;
+    }
+
+    .status-completed {
+      background: rgba(54,211,153,0.16);
+      color: #8ff0c0;
+    }
+
+    .status-cancelled {
+      background: rgba(255,123,156,0.16);
+      color: #ffb2c4;
+    }
+
+    .empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 760px;
+      background: #102638;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 13px;
+      color: #dcefff;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      height: 46px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      padding: 0 12px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .field textarea {
+      height: 100px;
+      resize: vertical;
+      padding-top: 12px;
+    }
+
+    .modal-actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-start;
+    }
+
+    @media (max-width: 1000px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .field select,
+select {
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  padding: 0 12px;
+  outline: none;
+  font-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.field select option,
+select option {
+  background-color: #102638;
+  color: #eef8ff;
+}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="brand-logo">
+            <img src="assets/logo.png" alt="Smilix Logo" />
+          </div>
+          <div>
+            <h1>Smilix</h1>
+            <p>منصة إدارة عيادات الأسنان</p>
+          </div>
+        </div>
+
+        <div class="nav-title">القائمة الرئيسية</div>
+        <div class="nav">
+          <button id="nav-dashboard" class="nav-btn" onclick="goToDashboard()"><span>لوحة التحكم</span><span>🏠</span></button>
+          <button id="nav-patients" class="nav-btn" onclick="goToPatients()"><span>المرضى</span><span>👤</span></button>
+          <button id="nav-appointments" class="nav-btn active" onclick="goToAppointments()"><span>المواعيد</span><span>📅</span></button>
+          <button id="nav-treatments" class="nav-btn" onclick="goToTreatments?.()"><span>العلاجات</span><span>🦷</span></button>
+          <button id="nav-invoices" class="nav-btn" onclick="goToInvoices()"><span>الفواتير</span><span>🧾</span></button>
+          <button id="nav-payments" class="nav-btn" onclick="goToPayments()"><span>الدفعات</span><span>💳</span></button>
+          <button id="nav-users" class="nav-btn" onclick="goToUsers?.()"><span>المستخدمون</span><span>👨‍💼</span></button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="topbar">
+        <div>
+          <h2>المواعيد</h2>
+          <p>إدارة مواعيد المرضى بشكل كامل.</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" onclick="openCreateModal()">+ إضافة موعد</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="toolbar">
+          <input id="searchInput" class="search-input" type="text" placeholder="ابحث باسم المريض أو الهاتف أو الكود" />
+          <input id="dateFilter" class="filter-input" type="date" />
+          <select id="statusFilter" class="filter-select">
+            <option value="">كل الحالات</option>
+            <option value="pending">قيد الانتظار</option>
+            <option value="confirmed">مؤكد</option>
+            <option value="completed">مكتمل</option>
+            <option value="cancelled">ملغي</option>
+          </select>
+          <button class="btn" onclick="loadAppointments()">بحث</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>المريض</th>
+                <th>الهاتف</th>
+                <th>التاريخ</th>
+                <th>الوقت</th>
+                <th>الحالة</th>
+                <th>المصدر</th>
+                <th>ملاحظات</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="appointmentsTableBody"></tbody>
+          </table>
+          <div id="emptyState" class="empty" style="display:none;">لا توجد مواعيد بعد.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="appointmentModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">إضافة موعد</h3>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>المريض</label>
+          <select id="patientId"></select>
+        </div>
+
+        <div class="field">
+          <label>الحالة</label>
+          <select id="status">
+            <option value="pending">قيد الانتظار</option>
+            <option value="confirmed">مؤكد</option>
+            <option value="completed">مكتمل</option>
+            <option value="cancelled">ملغي</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>التاريخ</label>
+          <input id="appointmentDate" type="date" />
+        </div>
+
+        <div class="field">
+          <label>الوقت</label>
+          <input id="appointmentTime" type="time" />
+        </div>
+
+        <div class="field full">
+          <label>المصدر</label>
+          <input id="source" type="text" placeholder="manual / phone / website" />
+        </div>
+
+        <div class="field full">
+          <label>ملاحظات</label>
+          <textarea id="notes"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn primary" onclick="saveAppointment()">حفظ</button>
+        <button class="btn" onclick="closeModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const permissions = {
+      admin: ["dashboard", "patients", "appointments", "treatments", "payments", "invoices", "users"],
+      doctor: ["dashboard", "patients", "appointments", "treatments"],
+      receptionist: ["dashboard", "patients", "appointments"],
+      accountant: ["dashboard", "payments", "invoices"]
+    };
+
+    function getCurrentUser() {
+      return JSON.parse(localStorage.getItem("user") || "null");
+    }
+
+    function getUserRole() {
+      const user = getCurrentUser();
+      if (!user) return null;
+
+      if (user.role?.name) return user.role.name.toLowerCase();
+      if (typeof user.role === "string") return user.role.toLowerCase();
+
+      return null;
+    }
+
+    function canAccess(page) {
+      const role = getUserRole();
+      if (!role) return false;
+      const allowedPages = permissions[role] || [];
+      return allowedPages.includes(page);
+    }
+
+    function protectPage(page) {
+      if (!canAccess(page)) {
+        alert("ما عندك صلاحية للدخول إلى هذه الصفحة");
+        window.location.href = "dashboard.html";
+      }
+    }
+
+    function hideNavIfNoAccess(elementId, page) {
+      const element = document.getElementById(elementId);
+      if (!element) return;
+      if (!canAccess(page)) {
+        element.style.display = "none";
+      }
+    }
+
+    function applySidebarPermissions() {
+      hideNavIfNoAccess("nav-dashboard", "dashboard");
+      hideNavIfNoAccess("nav-patients", "patients");
+      hideNavIfNoAccess("nav-appointments", "appointments");
+      hideNavIfNoAccess("nav-treatments", "treatments");
+      hideNavIfNoAccess("nav-payments", "payments");
+      hideNavIfNoAccess("nav-invoices", "invoices");
+      hideNavIfNoAccess("nav-users", "users");
+    }
+  </script>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (!token || !user) {
+      window.location.href = "login.html";
+    }
+
+    protectPage("appointments");
+
+    const apiBase = "http://127.0.0.1:5000/api/appointments";
+    let editingAppointmentId = null;
+    let allPatients = [];
+
+    function goToDashboard() {
+      window.location.href = "dashboard.html";
+    }
+
+    function goToPatients() {
+      window.location.href = "patients.html";
+    }
+
+    function goToAppointments() {
+      window.location.href = "appointments.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "-";
+      const date = new Date(dateString);
+      return date.toLocaleDateString("ar-EG", {
+        weekday: "long",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    }
+
+    function formatTime(timeString) {
+      if (!timeString) return "-";
+      return new Date(timeString).toLocaleTimeString("ar-EG", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    }
+
+    function getStatusText(status) {
+      switch (status) {
+        case "pending": return "قيد الانتظار";
+        case "confirmed": return "مؤكد";
+        case "completed": return "مكتمل";
+        case "cancelled": return "ملغي";
+        default: return status || "-";
+      }
+    }
+
+    async function loadPatientsForDropdown() {
+      const res = await fetch("http://127.0.0.1:5000/api/patients", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) throw new Error("Failed to load patients");
+
+      allPatients = await res.json();
+
+      const select = document.getElementById("patientId");
+      select.innerHTML = `<option value="">اختر المريض</option>`;
+
+      allPatients.forEach((patient) => {
+        select.innerHTML += `<option value="${patient.id}">${patient.fullName} - ${patient.phone || "-"}</option>`;
+      });
+    }
+
+    async function loadAppointments() {
+      try {
+        const search = document.getElementById("searchInput").value.trim();
+        const date = document.getElementById("dateFilter").value;
+        const status = document.getElementById("statusFilter").value;
+
+        const query = new URLSearchParams();
+        if (search) query.append("search", search);
+        if (date) query.append("date", date);
+        if (status) query.append("status", status);
+
+        const res = await fetch(`${apiBase}?${query.toString()}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error("Failed to load appointments");
+
+        const appointments = await res.json();
+        const tableBody = document.getElementById("appointmentsTableBody");
+        const emptyState = document.getElementById("emptyState");
+
+        tableBody.innerHTML = "";
+
+        if (!appointments.length) {
+          emptyState.style.display = "block";
+          return;
+        }
+
+        emptyState.style.display = "none";
+
+        appointments.forEach((item) => {
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td>${item.patient?.fullName || "-"}</td>
+            <td>${item.patient?.phone || "-"}</td>
+            <td>${formatDate(item.appointmentDate)}</td>
+            <td>${formatTime(item.appointmentTime)}</td>
+            <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
+            <td>${item.source || "-"}</td>
+            <td>${item.notes || "-"}</td>
+            <td>
+              <div class="action-cell">
+                ${item.status === "pending" ? `<button class="mini-btn confirm-btn">تأكيد</button>` : ""}
+                <button class="mini-btn edit-btn">تعديل</button>
+                <button class="mini-btn delete-btn">حذف</button>
+              </div>
+            </td>
+          `;
+
+          const confirmBtn = tr.querySelector(".confirm-btn");
+          if (confirmBtn) {
+            confirmBtn.addEventListener("click", () => confirmAppointment(item.id));
+          }
+
+          tr.querySelector(".edit-btn").addEventListener("click", () => openEditModal(item));
+          tr.querySelector(".delete-btn").addEventListener("click", () => deleteAppointment(item.id));
+
+          tableBody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error("Load appointments error:", error);
+        alert("تعذر تحميل المواعيد");
+      }
+    }
+
+    function openCreateModal() {
+      editingAppointmentId = null;
+      document.getElementById("modalTitle").textContent = "إضافة موعد";
+      resetForm();
+      document.getElementById("appointmentModal").classList.add("show");
+    }
+
+    function openEditModal(item) {
+      editingAppointmentId = item.id;
+      document.getElementById("modalTitle").textContent = "تعديل موعد";
+
+      document.getElementById("patientId").value = item.patientId || "";
+      document.getElementById("status").value = item.status || "pending";
+      document.getElementById("appointmentDate").value = item.appointmentDate ? item.appointmentDate.split("T")[0] : "";
+      document.getElementById("appointmentTime").value = item.appointmentTime ? new Date(item.appointmentTime).toISOString().substring(11, 16) : "";
+      document.getElementById("source").value = item.source || "";
+      document.getElementById("notes").value = item.notes || "";
+
+      document.getElementById("appointmentModal").classList.add("show");
+    }
+
+    function closeModal() {
+      document.getElementById("appointmentModal").classList.remove("show");
+    }
+
+    function resetForm() {
+      document.getElementById("patientId").value = "";
+      document.getElementById("status").value = "pending";
+      document.getElementById("appointmentDate").value = "";
+      document.getElementById("appointmentTime").value = "";
+      document.getElementById("source").value = "manual";
+      document.getElementById("notes").value = "";
+    }
+
+    async function saveAppointment() {
+      try {
+        const payload = {
+          patientId: document.getElementById("patientId").value,
+          status: document.getElementById("status").value,
+          appointmentDate: document.getElementById("appointmentDate").value,
+          appointmentTime: document.getElementById("appointmentTime").value,
+          source: document.getElementById("source").value,
+          notes: document.getElementById("notes").value,
+        };
+
+        if (!payload.patientId || !payload.appointmentDate || !payload.appointmentTime) {
+          alert("المريض والتاريخ والوقت مطلوبة");
+          return;
+        }
+
+        const method = editingAppointmentId ? "PUT" : "POST";
+        const url = editingAppointmentId ? `${apiBase}/${editingAppointmentId}` : apiBase;
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Failed to save appointment");
+
+        closeModal();
+        await loadAppointments();
+        localStorage.setItem("refreshDashboard", "true");
+      } catch (error) {
+        console.error("Save appointment error:", error);
+        alert("تعذر حفظ الموعد");
+      }
+    }
+
+    async function deleteAppointment(id) {
+      const confirmed = confirm("هل أنت متأكد من حذف الموعد؟");
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch(`${apiBase}/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Failed to delete appointment");
+
+        await loadAppointments();
+        localStorage.setItem("refreshDashboard", "true");
+      } catch (error) {
+        console.error("Delete appointment error:", error);
+        alert("تعذر حذف الموعد");
+      }
+    }
+
+    document.getElementById("searchInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loadAppointments();
+    });
+
+   async function confirmAppointment(id) {
+  try {
+    const res = await fetch(`http://localhost:5000/api/appointments/${id}/confirm`, {
+      method: "PUT"
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to confirm appointment");
+    }
+
+    const patientName = data.patient?.fullName || "المريض";
+    const phone = data.patient?.phone || "";
+    const date = formatDate(data.appointmentDate);
+    const time = formatTime(data.appointmentTime);
+
+    const message =
+`مرحباً ${patientName}
+
+تم تأكيد موعدك بنجاح في عيادة Smilix لطب الأسنان
+
+التاريخ: ${date}
+الوقت: ${time}
+
+نرجو الالتزام بالموعد، وفي حال التأخير يرجى التواصل معنا.
+
+نتمنى لك صحة وابتسامة دائمة`;
+
+    if (phone) {
+      const cleanPhone = String(phone).replace(/\D/g, "");
+      const url = `https://web.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(message.trim())}`;
+      console.log("WhatsApp URL:", url);
+      window.open(url, "_blank");
+    }
+
+    await loadAppointments();
+  } catch (error) {
+    console.error("Confirm error:", error);
+    alert("خطأ أثناء تأكيد الموعد");
+  }
+}
+function sendWhatsApp(phone, message) {
+  if (!phone) return;
+
+  phone = phone.replace(/\D/g, ""); // حذف أي شي غير أرقام
+
+  // 🔥 إذا الرقم بلش بـ 0 نحوله لسوريا
+  if (phone.startsWith("0")) {
+    phone = "963" + phone.substring(1);
+  }
+
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  require("electron").shell.openExternal(url);
+
+}
+
+    async function initPage() {
+      try {
+        applySidebarPermissions();
+        await loadPatientsForDropdown();
+        await loadAppointments();
+      } catch (error) {
+        console.error("Appointments page init error:", error);
+        alert("تعذر تحميل صفحة المواعيد");
+      }
+    }
+
+    initPage();
+  </script>
+</body>
+</html>

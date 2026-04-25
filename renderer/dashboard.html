@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smilix Dashboard</title>
+  <style>
+    :root {
+      --bg-1: #07121d;
+      --bg-2: #0d2233;
+      --panel: rgba(255,255,255,0.06);
+      --panel-strong: rgba(255,255,255,0.1);
+      --line: rgba(255,255,255,0.08);
+      --text: #eef8ff;
+      --muted: #9db6ca;
+      --primary: #35a8ff;
+      --primary-2: #2ce0c7;
+      --success: #36d399;
+      --warning: #ffb84d;
+      --danger: #ff7b9c;
+      --shadow: 0 20px 50px rgba(0,0,0,0.28);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+html, body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(53,168,255,0.18), transparent 24%),
+    radial-gradient(circle at 85% 15%, rgba(44,224,199,0.10), transparent 20%),
+    linear-gradient(135deg, var(--bg-1), var(--bg-2));
+  color: var(--text);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(70px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      width: 260px;
+      height: 260px;
+      background: rgba(53,168,255,0.15);
+      top: -40px;
+      left: -40px;
+    }
+
+    body::after {
+      width: 340px;
+      height: 340px;
+      background: rgba(44,224,199,0.09);
+      bottom: -60px;
+      right: -70px;
+    }
+.app {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  padding: 16px;
+  gap: 16px;
+}
+
+    .sidebar {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .brand-logo {
+      width: 68px;
+      height: 68px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(53,168,255,0.25), rgba(44,224,199,0.14));
+      border: 1px solid rgba(255,255,255,0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .brand-logo img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav-title {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 0 12px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      height: 52px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(53,168,255,0.18), rgba(44,224,199,0.12));
+      border-color: rgba(53,168,255,0.22);
+      transform: translateY(-1px);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 18px;
+    }
+
+    .user-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .user-card .name {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .user-card .meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .logout-btn {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--danger), #ff5f7c);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .content {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .action-btn {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .left-col,
+    .right-col {
+      display: grid;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+.card:hover {
+
+  transform: translateY(-3px);
+
+  background: rgba(53,168,255,0.2);
+
+}
+    .stat-card {
+      min-height: 128px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: 0.25s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stat-value {
+      font-size: 34px;
+      font-weight: 800;
+      margin: 10px 0 0;
+    }
+
+    .stat-note {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .highlight-blue { color: var(--primary); }
+    .highlight-green { color: var(--success); }
+    .highlight-orange { color: var(--warning); }
+    .highlight-pink { color: var(--danger); }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .section-head span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .appointments {
+      display: grid;
+      gap: 12px;
+    }
+
+    .appointment-item {
+      display: grid;
+      grid-template-columns: 110px 1fr auto;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .time-box {
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(53,168,255,0.18), rgba(44,224,199,0.12));
+      border: 1px solid rgba(53,168,255,0.18);
+      font-weight: 700;
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .appointment-info h4 {
+      margin: 0 0 6px;
+      font-size: 16px;
+    }
+
+    .appointment-info p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      width: fit-content;
+      white-space: nowrap;
+    }
+
+    .status.confirmed {
+      background: rgba(54,211,153,0.16);
+      color: #8ff0c0;
+      border: 1px solid rgba(54,211,153,0.2);
+    }
+
+    .status.pending {
+      background: rgba(255,184,77,0.16);
+      color: #ffd387;
+      border: 1px solid rgba(255,184,77,0.22);
+    }
+
+    .status.cancelled {
+      background: rgba(255,123,156,0.16);
+      color: #ffb2c4;
+      border: 1px solid rgba(255,123,156,0.22);
+    }
+
+    .status.completed {
+      background: rgba(53,168,255,0.16);
+      color: #9dd6ff;
+      border: 1px solid rgba(53,168,255,0.22);
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-item {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .mini-item h4 {
+      margin: 0 0 6px;
+      font-size: 15px;
+    }
+
+    .mini-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .quick-btn {
+      height: 92px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.04);
+      border-radius: 20px;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+      transition: 0.25s ease;
+    }
+
+    .quick-btn:hover {
+      background: linear-gradient(135deg, rgba(53,168,255,0.18), rgba(44,224,199,0.12));
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 1200px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        grid-template-columns: 1fr;
+        overflow: auto;
+        height: auto;
+      }
+
+      .sidebar {
+        order: 2;
+      }
+
+      .content {
+        order: 1;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .appointment-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="brand-logo">
+            <img src="assets/logo.png" alt="Smilix Logo">
+          </div>
+          <div>
+            <h1>Smilix</h1>
+            <p>منصة إدارة عيادات الأسنان</p>
+          </div>
+        </div>
+      <div id="newBookingAlert" style="
+  position: fixed;
+  top: 20px;
+  left: 50px;
+  transform: translateX(-50%);
+  width: 420px;
+  max-width: calc(100vw - 40px);
+  background: #102638;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  padding: 18px;
+  z-index: 9999;
+  display: none;
+  cursor: pointer;
+">
+  <h3 style="margin:0 0 10px; font-size:20px;">🔔 تم حجز موعد جديد</h3>
+  <div id="alertContent" style="line-height:1.9; font-size:14px;"></div>
+  <div style="margin-top:12px; color:#9dd6ff; font-size:12px;">
+    اضغط على التنبيه لإيقاف الصوت
+  </div>
+</div>
+
+<audio id="bookingAlertSound" loop>
+  <source src="assets/alert.mp3" type="audio/mpeg">
+</audio>
+        <div class="nav-title">القائمة الرئيسية</div>
+
+        <div class="nav">
+          <button class="nav-btn active"><span>لوحة التحكم</span><span>🏠</span></button>
+          <button class="nav-btn" onclick="goToPatients()">
+          <span>المرضى</span>
+          <span>👤</span>
+          </button>
+          <button class="nav-btn" onclick="window.location.href='treatment-types.html'"><span>أنواع العلاجات</span><span>🎨</span></button>
+          <button class="nav-btn" onclick="window.location.href='appointments.html'">
+          <span>المواعيد</span>
+          <span>📅</span>
+          </button>
+         <button class="nav-btn" onclick="goToLab()">
+         <span>المخبر</span>
+         <span>🧪</span>
+         </button>
+          <button id="nav-slots" class="nav-btn" onclick="goToSlots()">
+          <span>الأوقات</span>
+          <span>⏰</span>
+          </button>
+          <button class="nav-btn" onclick="goToSuppliers()">
+          <span>الموردين</span>
+          <span>🏭</span>
+          </button>
+          <button class="nav-btn" onclick="window.location.href='payments.html'">
+          <span>الدفعات</span>
+         <span>💳</span>
+        </button>    
+        <button class="nav-btn" onclick="window.location.href='invoices.html'">
+         <span>الفواتير</span>
+       <span>🧾</span>
+         </button>   
+         <button id="nav-expenses" class="nav-btn" onclick="goToExpenses()">
+  <span>المصاريف</span>
+  <span>💸</span>
+</button>
+<button class="nav-btn" onclick="window.location.href='users.html'">
+  <span>المستخدمون</span>
+  <span>👨‍💼</span>
+</button>
+<button class="nav-btn" onclick="goToAbout()">
+  <span>عن البرنامج</span>
+  <span>ℹ️</span>
+</button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="name" id="sidebarName">...</div>
+          <div class="meta" id="sidebarRole">...</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="topbar">
+        <div>
+          <h2>أهلًا، <span id="topbarName">...</span> 👋</h2>
+          <p>هذه نظرة عامة سريعة على العيادة اليوم.</p>
+        </div>
+
+        <div class="top-actions">
+        </div>
+      </section>
+
+      <section class="main-grid">
+        <div class="left-col">
+          <div class="stats-grid">
+            <div class="card stat-card">
+              <div class="stat-top">
+                <span>إجمالي المرضى</span>
+                <span class="highlight-blue">●</span>
+              </div>
+              <div class="stat-value" id="totalPatients">0</div>
+              <div class="stat-note">إجمالي المرضى في النظام</div>
+            </div>
+
+            <div class="card stat-card">
+              <div class="stat-top">
+                <span>مواعيد اليوم</span>
+                <span class="highlight-green">●</span>
+              </div>
+              <div class="stat-value" id="todayAppointments">0</div>
+              <div class="stat-note">عدد المواعيد الخاصة بهذا اليوم</div>
+            </div>
+
+            <div class="card stat-card">
+              <div class="stat-top">
+                <span>دفعات اليوم</span>
+                <span class="highlight-orange">●</span>
+              </div>
+              <div class="stat-value" id="todayPayments">$0</div>
+              <div class="stat-note">إجمالي الدفعات المسجلة اليوم</div>
+            </div>
+
+            <div class="card stat-card">
+              <div class="stat-top">
+                <span>آخر المرضى</span>
+                <span class="highlight-pink">●</span>
+              </div>
+              <div class="stat-value" id="latestPatientsCount">0</div>
+              <div class="stat-note">آخر المرضى المضافين مؤخرًا</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-head">
+              <h3>آخر المواعيد</h3>
+              <span>من قاعدة البيانات</span>
+            </div>
+
+            <div class="appointments" id="appointmentsList"></div>
+          </div>
+        </div>
+
+        <div class="right-col">
+          <div class="card">
+            <div class="section-head">
+              <h3>إجراءات سريعة</h3>
+              <span>الوصول السريع</span>
+            </div>
+
+            <div class="quick-actions">
+            <button class="nav-btn" onclick="goToPatients()">
+            <span>إضافة مريض</span>
+             </button>  
+          <button class="nav-btn active"><span>المواعيد</span><span></span></button>
+   <button class="nav-btn" onclick="window.location.href='payments.html'">
+          <span>الدفعات</span>
+         <span>💳</span>
+        </button>    
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-head">
+              <h3>آخر المرضى</h3>
+              <span>آخر الإضافات</span>
+            </div>
+
+            <div class="mini-list" id="latestPatientsList"></div>
+          </div>
+
+          <div class="card">
+            <div class="section-head">
+              <h3>ملاحظات الإدارة</h3>
+              <span>تنبيهات</span>
+            </div>
+
+            <div class="mini-list" id="adminAlertsList"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+<script>
+ const permissions = {
+  admin: ["dashboard", "patients", "appointments", "treatments", "payments", "invoices", "users", "expenses"],
+  doctor: ["dashboard", "patients", "appointments", "treatments"],
+  receptionist: ["dashboard", "patients", "appointments"],
+  accountant: ["dashboard", "payments", "invoices", "expenses"]
+};
+
+  function getCurrentUser() {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  }
+
+  function getUserRole() {
+    const user = getCurrentUser();
+    if (!user) return null;
+
+    if (user.role?.name) return user.role.name.toLowerCase();
+    if (typeof user.role === "string") return user.role.toLowerCase();
+
+    return null;
+  }
+
+  function canAccess(page) {
+    const role = getUserRole();
+    if (!role) return false;
+
+    const allowedPages = permissions[role] || [];
+    return allowedPages.includes(page);
+  }
+
+  function protectPage(page) {
+    if (!canAccess(page)) {
+      alert("ما عندك صلاحية للدخول إلى هذه الصفحة");
+      window.location.href = "dashboard.html";
+    }
+  }
+
+  function hideNavIfNoAccess(elementId, page) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+
+    if (!canAccess(page)) {
+      element.style.display = "none";
+    }
+  }
+
+  function applySidebarPermissions() {
+    hideNavIfNoAccess("nav-dashboard", "dashboard");
+    hideNavIfNoAccess("nav-patients", "patients");
+    hideNavIfNoAccess("nav-appointments", "appointments");
+    hideNavIfNoAccess("nav-slots", "slots");
+    hideNavIfNoAccess("nav-treatments", "treatments");
+    hideNavIfNoAccess("nav-payments", "payments");
+    hideNavIfNoAccess("nav-invoices", "invoices");
+    hideNavIfNoAccess("nav-users", "users");
+    hideNavIfNoAccess("nav-expenses", "expenses");
+
+  }
+  function goToLab() {
+  window.location.href = "lab.html";
+}
+</script>
+
+<script>
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+
+  if (!token || !user) {
+    window.location.href = "login.html";
+  }
+
+  document.getElementById("sidebarName").textContent = user.fullName || user.username;
+  document.getElementById("sidebarRole").textContent = "الصلاحية: " + (user.role || "-");
+  document.getElementById("topbarName").textContent = user.fullName || user.username;
+
+  function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "login.html";
+  }
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("ar-EG");
+  }
+
+  function formatTime(timeString) {
+    const date = new Date(timeString);
+    return date.toLocaleTimeString("ar-EG", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function getStatusClass(status) {
+    switch (status) {
+      case "confirmed":
+        return "confirmed";
+      case "completed":
+        return "completed";
+      case "cancelled":
+        return "cancelled";
+      default:
+        return "pending";
+    }
+  }
+
+  function getStatusText(status) {
+    switch (status) {
+      case "confirmed":
+        return "مؤكد";
+      case "completed":
+        return "مكتمل";
+      case "cancelled":
+        return "ملغي";
+      case "missed":
+        return "فائت";
+      default:
+        return "قيد الانتظار";
+    }
+  }
+if (localStorage.getItem("refreshDashboard") === "true") {
+  localStorage.removeItem("refreshDashboard");
+  loadDashboardData();
+}
+async function loadAdminAlerts() {
+  try {
+    const res = await fetch("http://127.0.0.1:5000/api/dashboard-alerts", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to load alerts");
+    }
+
+    const alerts = await res.json();
+    const alertsList = document.getElementById("adminAlertsList");
+
+    alertsList.innerHTML = "";
+
+    alerts.forEach((alert) => {
+      alertsList.innerHTML += `
+        <div class="mini-item">
+          <h4>${alert.title}</h4>
+          <p>${alert.text}</p>
+        </div>
+      `;
+    });
+  } catch (error) {
+    console.error("Load admin alerts error:", error);
+
+    document.getElementById("adminAlertsList").innerHTML = `
+      <div class="mini-item">
+        <h4>تعذر تحميل التنبيهات</h4>
+        <p>حدث خطأ أثناء جلب التنبيهات من النظام.</p>
+      </div>
+    `;
+  }
+}
+let lastShownAppointmentId = null;
+let alertSoundPlaying = false;
+
+function formatDateOnly(dateString) {
+  if (!dateString) return "-";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("ar-EG", {
+    weekday: "long",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
+}
+
+function formatTimeOnly(timeString) {
+  if (!timeString) return "-";
+  return new Date(timeString).toLocaleTimeString("ar-EG", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function showNewBookingAlert(item) {
+  const alertBox = document.getElementById("newBookingAlert");
+  const alertContent = document.getElementById("alertContent");
+  const sound = document.getElementById("bookingAlertSound");
+
+  alertContent.innerHTML = `
+    <div><strong>الاسم:</strong> ${item.patient?.fullName || "-"}</div>
+    <div><strong>الهاتف:</strong> ${item.patient?.phone || "-"}</div>
+    <div><strong>اليوم/التاريخ:</strong> ${formatDateOnly(item.appointmentDate)}</div>
+    <div><strong>الوقت:</strong> ${formatTimeOnly(item.appointmentTime)}</div>
+  `;
+
+  alertBox.style.display = "block";
+
+  if (!alertSoundPlaying) {
+    sound.currentTime = 0;
+    sound.play().catch(err => console.log("Sound play blocked:", err));
+    alertSoundPlaying = true;
+  }
+}
+
+function stopBookingAlert() {
+  const alertBox = document.getElementById("newBookingAlert");
+  const sound = document.getElementById("bookingAlertSound");
+
+  sound.pause();
+  sound.currentTime = 0;
+  alertSoundPlaying = false;
+  alertBox.style.display = "none";
+}
+
+document.getElementById("newBookingAlert").addEventListener("click", () => {
+  stopBookingAlert();
+  window.location.href = "appointments.html";
+});
+
+async function checkNewPendingBooking() {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch("http://127.0.0.1:5000/api/appointments/latest/pending", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) return;
+
+    const item = await res.json();
+
+    if (!item) return;
+
+    if (lastShownAppointmentId === null) {
+      lastShownAppointmentId = item.id;
+      return;
+    }
+
+    if (item.id !== lastShownAppointmentId) {
+      lastShownAppointmentId = item.id;
+      showNewBookingAlert(item);
+    }
+  } catch (error) {
+    console.error("Check new booking error:", error);
+  }
+}
+
+setInterval(checkNewPendingBooking, 5000);
+checkNewPendingBooking();
+
+  async function loadDashboardData() {
+    try {
+      const res = await fetch("http://127.0.0.1:5000/api/dashboard", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to load dashboard data");
+      }
+
+      const data = await res.json();
+
+      document.getElementById("totalPatients").textContent = data.patientsCount ?? 0;
+      document.getElementById("todayAppointments").textContent = data.appointmentsCount ?? 0;
+      document.getElementById("todayPayments").textContent = `$${data.invoicesCount ?? 0}`;
+      document.getElementById("latestPatientsCount").textContent = data.latestPatients?.length ?? 0;
+
+      const appointmentsList = document.getElementById("appointmentsList");
+      appointmentsList.innerHTML = "";
+
+      if (!data.latestAppointments || !data.latestAppointments.length) {
+        appointmentsList.innerHTML = `
+          <div class="mini-item">
+            <h4>لا توجد مواعيد بعد</h4>
+            <p>أضف أول موعد ليظهر هنا.</p>
+          </div>
+        `;
+      } else {
+        data.latestAppointments.forEach((item) => {
+          appointmentsList.innerHTML += `
+            <div class="appointment-item">
+              <div class="time-box">
+                ${formatDate(item.appointmentDate)}<br>
+                ${formatTime(item.appointmentTime)}
+              </div>
+              <div class="appointment-info">
+                <h4>${item.patient?.fullName || item.patientName || "-"}</h4>
+                <p>${item.notes || "بدون ملاحظات"} • المصدر: ${item.source || "-"}</p>
+              </div>
+              <div class="status ${getStatusClass(item.status)}">
+                ${getStatusText(item.status)}
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      const latestPatientsList = document.getElementById("latestPatientsList");
+      latestPatientsList.innerHTML = "";
+
+      if (!data.latestPatients || !data.latestPatients.length) {
+        latestPatientsList.innerHTML = `
+          <div class="mini-item">
+            <h4>لا يوجد مرضى بعد</h4>
+            <p>أضف أول مريض ليظهر هنا.</p>
+          </div>
+        `;
+      } else {
+        data.latestPatients.forEach((item) => {
+          latestPatientsList.innerHTML += `
+            <div class="mini-item">
+              <h4>${item.fullName}</h4>
+              <p>الهاتف: ${item.phone || "-"} • تاريخ الإضافة: ${formatDate(item.createdAt)}</p>
+            </div>
+          `;
+        });
+      }
+
+    } catch (error) {
+      console.error("Dashboard load error:", error);
+
+      document.getElementById("appointmentsList").innerHTML = `
+        <div class="mini-item">
+          <h4>تعذر تحميل البيانات</h4>
+          <p>تأكد أن السيرفر شغال وأن route الداشبورد مفعّلة.</p>
+        </div>
+      `;
+
+      document.getElementById("latestPatientsList").innerHTML = `
+        <div class="mini-item">
+          <h4>لا يمكن جلب البيانات</h4>
+          <p>تحقق من الاتصال مع الـ API.</p>
+        </div>
+      `;
+    }
+  }
+  function goToSlots() {
+  window.location.href = "slots.html";
+}
+function goToPatients() {
+  window.location.href = "patients.html";
+}
+function goToExpenses() {
+  window.location.href = "expenses.html";
+}
+function goToSuppliers() {
+  window.location.href = "suppliers.html";
+}
+function goToAbout() {
+  window.location.href = "about.html";
+}
+  loadDashboardData();
+  loadAdminAlerts();
+</script>
+</body>
+</html>

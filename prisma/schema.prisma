@@ -1,0 +1,318 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider  = "postgresql"
+ 
+}
+
+model Role {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(50)
+  description String?
+
+  users User[]
+
+  @@map("roles")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @db.VarChar(50)
+  passwordHash String   @map("password_hash")
+  fullName     String   @map("full_name") @db.VarChar(150)
+  roleId       Int      @map("role_id")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  role                Role               @relation(fields: [roleId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdAppointments Appointment[]      @relation("AppointmentsCreatedBy")
+  createdTreatments   TreatmentSession[]
+  createdInvoices     Invoice[]
+  receivedPayments    Payment[]
+  availableSlots      AvailableSlot[]
+  expenses            Expense[]
+
+  @@map("users")
+}
+
+model Patient {
+  id          Int       @id @default(autoincrement())
+  patientCode String    @unique @map("patient_code") @db.VarChar(30)
+  fullName    String    @map("full_name") @db.VarChar(150)
+  phone       String?   @db.VarChar(30)
+  gender      String?   @db.VarChar(10)
+  birthDate   DateTime? @map("birth_date") @db.Date
+  address     String?
+  notes       String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  appointments      Appointment[]
+  treatmentSessions TreatmentSession[]
+  invoices          Invoice[]
+  payments          Payment[]
+  files             PatientFile[]
+  labOrders         LabOrder[]
+
+  @@map("patients")
+}
+
+model Appointment {
+  id              Int      @id @default(autoincrement())
+  patientId       Int      @map("patient_id")
+  appointmentDate DateTime @map("appointment_date") @db.Date
+  appointmentTime DateTime @map("appointment_time") @db.Time(0)
+  status          String   @default("pending") @db.VarChar(20)
+  source          String   @default("clinic") @db.VarChar(20)
+  notes           String?
+  createdBy       Int?     @map("created_by")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  patient           Patient            @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdByUser     User?              @relation("AppointmentsCreatedBy", fields: [createdBy], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  treatmentSessions TreatmentSession[]
+
+  @@index([patientId])
+  @@index([appointmentDate])
+  @@index([status])
+  @@map("appointments")
+}
+
+model TreatmentType {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(100)
+  engName      String?  @map("eng_name") @db.VarChar(100)
+  workType     String?  @map("work_type") @db.VarChar(100)
+  defaultPrice Decimal  @default(0) @map("default_price") @db.Decimal(12, 2)
+  colorHex     String?  @map("color_hex") @db.VarChar(20)
+  sortOrder    Int      @default(0) @map("sort_order")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  treatmentSessions TreatmentSession[]
+
+  @@map("treatment_types")
+}
+
+model TreatmentSession {
+  id              Int      @id @default(autoincrement())
+  patientId       Int      @map("patient_id")
+  appointmentId   Int?     @map("appointment_id")
+  treatmentTypeId Int      @map("treatment_type_id")
+  toothNumber     String?  @map("tooth_number") @db.VarChar(10)
+  toothSide       String?  @map("tooth_side") @db.VarChar(50)
+  price           Decimal  @default(0) @db.Decimal(12, 2)
+  labName         String?  @map("lab_name") @db.VarChar(150)
+  evaluation      String?  @db.VarChar(100)
+  status          String   @default("planned") @db.VarChar(20)
+  notes           String?
+  sessionDate     DateTime @default(now()) @map("session_date") @db.Date
+  createdBy       Int?     @map("created_by")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  patient       Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  appointment   Appointment?  @relation(fields: [appointmentId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  treatmentType TreatmentType @relation(fields: [treatmentTypeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdByUser User?         @relation(fields: [createdBy], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  invoiceItems  InvoiceItem[]
+
+  @@index([patientId])
+  @@index([sessionDate])
+  @@map("treatment_sessions")
+}
+
+model Invoice {
+  id              Int      @id @default(autoincrement())
+  invoiceNumber   String   @unique @map("invoice_number") @db.VarChar(50)
+  patientId       Int      @map("patient_id")
+  invoiceDate     DateTime @default(now()) @map("invoice_date") @db.Date
+  totalAmount     Decimal  @default(0) @map("total_amount") @db.Decimal(12, 2)
+  discountAmount  Decimal  @default(0) @map("discount_amount") @db.Decimal(12, 2)
+  finalAmount     Decimal  @default(0) @map("final_amount") @db.Decimal(12, 2)
+  paidAmount      Decimal  @default(0) @map("paid_amount") @db.Decimal(12, 2)
+  remainingAmount Decimal  @default(0) @map("remaining_amount") @db.Decimal(12, 2)
+  status          String   @default("unpaid") @db.VarChar(20)
+  notes           String?
+  createdBy       Int?     @map("created_by")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  patient       Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdByUser User?         @relation(fields: [createdBy], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  invoiceItems  InvoiceItem[]
+  payments      Payment[]
+
+  @@index([patientId])
+  @@index([invoiceDate])
+  @@index([status])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id                 Int     @id @default(autoincrement())
+  invoiceId          Int     @map("invoice_id")
+  treatmentSessionId Int?    @map("treatment_session_id")
+  itemName           String  @map("item_name") @db.VarChar(150)
+  qty                Int     @default(1)
+  unitPrice          Decimal @default(0) @map("unit_price") @db.Decimal(12, 2)
+  totalPrice         Decimal @default(0) @map("total_price") @db.Decimal(12, 2)
+  notes              String?
+
+  invoice          Invoice           @relation(fields: [invoiceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  treatmentSession TreatmentSession? @relation(fields: [treatmentSessionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("invoice_items")
+}
+
+model Payment {
+  id            Int      @id @default(autoincrement())
+  patientId     Int      @map("patient_id")
+  invoiceId     Int?     @map("invoice_id")
+  amount        Decimal  @db.Decimal(12, 2)
+  paymentDate   DateTime @default(now()) @map("payment_date") @db.Date
+  paymentMethod String   @default("cash") @map("payment_method") @db.VarChar(20)
+  notes         String?
+  receivedBy    Int?     @map("received_by")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  patient        Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  invoice        Invoice? @relation(fields: [invoiceId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  receivedByUser User?    @relation(fields: [receivedBy], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([patientId])
+  @@index([invoiceId])
+  @@index([paymentDate])
+  @@map("payments")
+}
+
+model PatientFile {
+  id         Int      @id @default(autoincrement())
+  patientId  Int      @map("patient_id")
+  fileName   String   @map("file_name") @db.VarChar(255)
+  filePath   String   @map("file_path")
+  fileType   String?  @map("file_type") @db.VarChar(100)
+  category   String   @db.VarChar(30)
+  uploadedAt DateTime @default(now()) @map("uploaded_at")
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([patientId])
+  @@map("patient_files")
+}
+
+model AvailableSlot {
+  id        Int      @id @default(autoincrement())
+  doctorId  Int?     @map("doctor_id")
+  date      DateTime @db.Date
+  startTime String   @map("start_time") @db.VarChar(10)
+  endTime   String   @map("end_time") @db.VarChar(10)
+  status    String   @default("available")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  doctor User? @relation(fields: [doctorId], references: [id])
+
+  @@map("available_slots")
+}
+
+model LabOrder {
+  id          Int       @id @default(autoincrement())
+  patientId   Int
+  toothNumber String
+  workType    String
+  labName     String
+  sendDate    DateTime
+  dueDate     DateTime?
+  receiveDate DateTime?
+  cost        Float?
+  paidAmount  Float     @default(0)
+  status      String    @default("sent") // sent, in_progress, ready, delivered
+  notes       String?
+  expenses    Expense?
+  patient     Patient   @relation(fields: [patientId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Expense {
+  id                 Int               @id @default(autoincrement())
+  title              String            @db.VarChar(200)
+  category           String            @default("general") @db.VarChar(50) // general | lab | supplier
+  amount             Decimal           @default(0) @db.Decimal(12, 2)
+  expenseDate        DateTime          @default(now()) @map("expense_date") @db.Date
+  notes              String?
+  supplierPurchaseId Int?              @map("supplier_purchase_id")
+  supplierPurchase   SupplierPurchase? @relation(fields: [supplierPurchaseId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  createdBy          Int?              @map("created_by")
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+
+  labOrderId Int? @unique @map("lab_order_id")
+
+  createdByUser User?     @relation(fields: [createdBy], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  labOrder      LabOrder? @relation(fields: [labOrderId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@index([category])
+  @@index([expenseDate])
+  @@map("expenses")
+}
+
+model Supplier {
+  id        Int                @id @default(autoincrement())
+  name      String             @db.VarChar(150)
+  phone     String?            @db.VarChar(30)
+  company   String?            @db.VarChar(150)
+  address   String?
+  notes     String?
+  purchases SupplierPurchase[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model SupplierPurchase {
+  id           Int      @id @default(autoincrement())
+  supplierId   Int
+  purchaseDate DateTime @default(now()) @map("purchase_date") @db.Date
+  title        String   @db.VarChar(200)
+  notes        String?
+  totalAmount  Decimal  @default(0) @map("total_amount") @db.Decimal(12, 2)
+  paidAmount   Decimal  @default(0) @map("paid_amount") @db.Decimal(12, 2)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  supplier Supplier               @relation(fields: [supplierId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  items    SupplierPurchaseItem[]
+  expenses Expense[]
+
+  @@index([supplierId])
+  @@index([purchaseDate])
+  @@map("supplier_purchases")
+}
+
+model SupplierPurchaseItem {
+  id                 Int      @id @default(autoincrement())
+  supplierPurchaseId Int      @map("supplier_purchase_id")
+  itemName           String   @map("item_name") @db.VarChar(200)
+  quantity           Decimal  @default(1) @db.Decimal(12, 2)
+  unitPrice          Decimal  @default(0) @map("unit_price") @db.Decimal(12, 2)
+  totalPrice         Decimal  @default(0) @map("total_price") @db.Decimal(12, 2)
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  supplierPurchase SupplierPurchase @relation(fields: [supplierPurchaseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([supplierPurchaseId])
+  @@map("supplier_purchase_items")
+}
+model Review {
+  id        Int      @id @default(autoincrement())
+  name      String
+  rating    Int      // من 1 إلى 5
+  comment   String
+  createdAt DateTime @default(now())
+}

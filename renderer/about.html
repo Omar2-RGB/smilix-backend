@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عن البرنامج - Smilix</title>
+
+<style>
+:root {
+  --bg-1:#07121d;
+  --bg-2:#0d2233;
+  --panel:rgba(255,255,255,0.05);
+  --line:rgba(255,255,255,0.08);
+  --text:#eef8ff;
+  --muted:#9db6ca;
+  --primary:#35a8ff;
+  --primary-2:#2ce0c7;
+  --danger:#ff5f7c;
+  --shadow:0 20px 50px rgba(0,0,0,0.3);
+}
+
+* { box-sizing:border-box; }
+
+body{
+  margin:0;
+  font-family:"Segoe UI", Tahoma, sans-serif;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(53,168,255,0.18), transparent 24%),
+    radial-gradient(circle at 85% 15%, rgba(44,224,199,0.10), transparent 20%),
+    linear-gradient(135deg,var(--bg-1),var(--bg-2));
+  color:var(--text);
+  overflow-x:hidden;
+}
+
+.app{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  min-height:100vh;
+  gap:16px;
+  padding:16px;
+}
+
+.sidebar{
+  background:linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03));
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:22px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(20px);
+  display:flex;
+  flex-direction:column;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:28px;
+}
+
+.brand-logo{
+  width:68px;
+  height:68px;
+  border-radius:20px;
+  background:linear-gradient(145deg,rgba(53,168,255,0.25),rgba(44,224,199,0.14));
+  border:1px solid rgba(255,255,255,0.14);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:32px;
+}
+
+.brand h1{
+  margin:0;
+  font-size:28px;
+}
+
+.brand p{
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.nav-title{
+  color:var(--muted);
+  font-size:12px;
+  margin:6px 0 12px;
+}
+
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.nav-btn{
+  height:52px;
+  border:1px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.04);
+  color:var(--text);
+  border-radius:16px;
+  padding:0 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  font-size:15px;
+  transition:.25s ease;
+}
+
+.nav-btn:hover,
+.nav-btn.active{
+  background:linear-gradient(135deg,rgba(53,168,255,0.18),rgba(44,224,199,0.12));
+  border-color:rgba(53,168,255,0.22);
+  transform:translateY(-1px);
+}
+
+.sidebar-footer{
+  margin-top:auto;
+}
+
+.logout-btn{
+  width:100%;
+  height:48px;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(135deg,var(--danger),#ff5f7c);
+  color:white;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.content{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  min-width:0;
+}
+
+.topbar,
+.panel{
+  background:linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.03));
+  border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px);
+}
+
+.topbar{
+  padding:22px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+.topbar h2{
+  margin:0;
+  font-size:30px;
+}
+
+.topbar p{
+  margin:6px 0 0;
+  color:var(--muted);
+  line-height:1.7;
+}
+
+.panel{
+  padding:22px;
+}
+
+.panel h3{
+  margin:0 0 14px;
+  font-size:23px;
+}
+
+.panel p{
+  color:var(--muted);
+  line-height:1.9;
+  margin:0;
+}
+
+.hero-about{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:16px;
+}
+
+.badge{
+  display:inline-flex;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(53,168,255,0.13);
+  border:1px solid rgba(53,168,255,0.24);
+  color:#cce9ff;
+  font-size:13px;
+  margin-bottom:14px;
+}
+
+.hero-title{
+  font-size:40px;
+  line-height:1.25;
+  margin:0 0 12px;
+}
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+.feature{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:18px;
+  padding:16px;
+  min-height:88px;
+  transition:.25s ease;
+}
+
+.feature:hover{
+  transform:translateY(-4px);
+  background:rgba(255,255,255,0.065);
+}
+
+.feature strong{
+  display:block;
+  margin-bottom:6px;
+  font-size:17px;
+}
+
+.feature span{
+  display:block;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+.stat{
+  background:linear-gradient(135deg,rgba(53,168,255,0.14),rgba(44,224,199,0.08));
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:18px;
+  padding:18px;
+}
+
+.stat .label{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:8px;
+}
+
+.stat .value{
+  font-size:28px;
+  font-weight:800;
+}
+
+.dev-card{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:18px;
+  border-radius:20px;
+  background:linear-gradient(135deg,rgba(53,168,255,0.16),rgba(44,224,199,0.10));
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.dev-avatar{
+  width:70px;
+  height:70px;
+  border-radius:22px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  flex-shrink:0;
+}
+
+.dev-card h4{
+  margin:0;
+  font-size:22px;
+}
+
+.dev-card p{
+  margin:5px 0 0;
+}
+
+.version-box{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.version-item{
+  padding:16px;
+  border-radius:18px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
+}
+
+.version-item span{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.version-item strong{
+  display:block;
+  margin-top:6px;
+  font-size:18px;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+
+.btn{
+  height:44px;
+  padding:0 16px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.05);
+  color:var(--text);
+  cursor:pointer;
+  font-size:14px;
+}
+
+.btn.primary{
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  border:none;
+  color:white;
+  font-weight:700;
+}
+
+.reveal{
+  opacity:0;
+  transform:translateY(24px);
+  transition:.7s ease;
+}
+
+.reveal.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+@media(max-width:1100px){
+  .app{grid-template-columns:1fr;}
+  .hero-about{grid-template-columns:1fr;}
+  .features{grid-template-columns:repeat(2,1fr);}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .version-box{grid-template-columns:1fr;}
+}
+
+@media(max-width:650px){
+  .features,
+  .stats-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div>
+      <div class="brand">
+        <div class="brand-logo">🦷</div>
+        <div>
+          <h1>Smilix</h1>
+          <p>Dental Management System</p>
+        </div>
+      </div>
+
+      <div class="nav-title">القائمة الرئيسية</div>
+      <div class="nav">
+        <button class="nav-btn" onclick="goDashboard()"><span>لوحة التحكم</span><span>🏠</span></button>
+        <button class="nav-btn" onclick="goPatients()"><span>المرضى</span><span>👤</span></button>
+        <button class="nav-btn" onclick="goAppointments()"><span>المواعيد</span><span>📅</span></button>
+        <button class="nav-btn" onclick="goTreatments()"><span>العلاجات</span><span>🦷</span></button>
+        <button class="nav-btn" onclick="goInvoices()"><span>الفواتير</span><span>🧾</span></button>
+        <button class="nav-btn" onclick="goPayments()"><span>الدفعات</span><span>💳</span></button>
+        <button class="nav-btn" onclick="goExpenses()"><span>المصاريف</span><span>💸</span></button>
+        <button class="nav-btn" onclick="goLab()"><span>المخبر</span><span>🧪</span></button>
+        <button class="nav-btn" onclick="goSuppliers()"><span>الموردين</span><span>🏭</span></button>
+        <button class="nav-btn active"><span>عن البرنامج</span><span>ℹ️</span></button>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+    </div>
+  </aside>
+
+  <main class="content">
+
+    <section class="topbar reveal">
+      <div>
+        <h2>ℹ️ عن برنامج Smilix</h2>
+        <p>نظام متكامل لإدارة عيادات الأسنان، يجمع بين التنظيم الطبي والمحاسبة والواجهة الحديثة.</p>
+      </div>
+      <button class="btn" onclick="goDashboard()">رجوع للوحة التحكم</button>
+    </section>
+
+    <section class="hero-about">
+      <div class="panel reveal">
+        <div class="badge">Smilix Dental System</div>
+        <h1 class="hero-title">إدارة عيادة الأسنان بأسلوب أسرع وأذكى</h1>
+        <p>
+          Smilix يساعد الطبيب والموظفين على إدارة المرضى، المواعيد، العلاجات،
+          الفواتير، الدفعات، المخبر، الموردين والمصاريف من مكان واحد
+          وبواجهة سهلة وسريعة.
+        </p>
+
+        <div class="actions">
+          <button class="btn primary" onclick="goPatients()">ابدأ بإدارة المرضى</button>
+          <button class="btn" onclick="goAppointments()">عرض المواعيد</button>
+        </div>
+      </div>
+
+      <div class="panel reveal">
+        <h3>📦 معلومات النظام</h3>
+        <div class="version-box">
+          <div class="version-item">
+            <span>الإصدار</span>
+            <strong>1.0.0</strong>
+          </div>
+          <div class="version-item">
+            <span>النوع</span>
+            <strong>Dental System</strong>
+          </div>
+          <div class="version-item">
+            <span>الحالة</span>
+            <strong>Active</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel reveal">
+      <h3>📊 لمحة سريعة</h3>
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="label">إدارة المرضى</div>
+          <div class="value">✔️</div>
+        </div>
+        <div class="stat">
+          <div class="label">الحجوزات والمواعيد</div>
+          <div class="value">✔️</div>
+        </div>
+        <div class="stat">
+          <div class="label">المحاسبة والدفعات</div>
+          <div class="value">✔️</div>
+        </div>
+        <div class="stat">
+          <div class="label">المخبر والموردين</div>
+          <div class="value">✔️</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel reveal">
+      <h3>🚀 ميزات النظام</h3>
+      <div class="features">
+        <div class="feature"><strong>👤 إدارة المرضى</strong><span>ملفات كاملة للمرضى مع بيانات وتفاصيل وملاحظات.</span></div>
+        <div class="feature"><strong>📅 المواعيد</strong><span>تنظيم مواعيد المرضى وحالات الحجز والتأكيد.</span></div>
+        <div class="feature"><strong>🦷 خريطة الأسنان</strong><span>متابعة العلاج على كل سن بطريقة واضحة وسريعة.</span></div>
+        <div class="feature"><strong>🧾 الفواتير</strong><span>إنشاء فواتير وتتبع المدفوع والباقي.</span></div>
+        <div class="feature"><strong>💳 الدفعات</strong><span>تسجيل دفعات المرضى وربطها بالحسابات.</span></div>
+        <div class="feature"><strong>🧪 المخبر</strong><span>تتبع طلبات المخبر والتكاليف والمدفوعات.</span></div>
+        <div class="feature"><strong>🏭 الموردين</strong><span>إدارة الموردين وفواتير الشراء والأصناف.</span></div>
+        <div class="feature"><strong>💸 المصاريف</strong><span>متابعة مصاريف العيادة وربطها بالمخبر والموردين.</span></div>
+      </div>
+    </section>
+
+    <section class="panel reveal">
+      <h3>⭐️ لماذا Smilix؟</h3>
+      <div class="features">
+        <div class="feature"><strong>⚡️ سريع</strong><span>تصميم عملي يساعد على إنجاز المهام اليومية بسرعة.</span></div>
+        <div class="feature"><strong>🎯 واضح</strong><span>واجهة منظمة ومفهومة بدون تعقيد.</span></div>
+        <div class="feature"><strong>📊 ماليًا دقيق</strong><span>دفعات، مصاريف، موردين، مخبر، وباقي الحسابات.</span></div>
+        <div class="feature"><strong>🌐 موقع حجز</strong><span>صفحة حجز خارجية للمرضى مرتبطة بالنظام.</span></div>
+      </div>
+    </section>
+
+    <section class="panel reveal">
+      <h3>👨‍💻 المطوّر</h3>
+      <div class="dev-card">
+        <div class="dev-avatar">👨‍💻</div>
+        <div>
+          <h4>المهندس عمر شعلان عبد العزيز </h4>
+          <p>مطوّر نظام Smilix Dental System</p>
+          <div class="actions">
+            <button class="btn primary" onclick="contactDeveloper()">تواصل مع المطوّر</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel reveal">
+      <h3>🚀 القادم في Smilix</h3>
+      <div class="features">
+        <div class="feature"><strong>📱 تطبيق موبايل</strong><span>نسخة مخصصة للهاتف لتسهيل المتابعة.</span></div>
+        <div class="feature"><strong>☁️ نسخة سحابية</strong><span>تشغيل النظام من أي مكان عبر الإنترنت.</span></div>
+        <div class="feature"><strong>📈 تقارير متقدمة</strong><span>تحليلات مالية وطبية أعمق لإدارة أفضل.</span></div>
+        <div class="feature"><strong>🔔 تنبيهات أذكى</strong><span>تنبيهات للديون والمواعيد والتقييمات.</span></div>
+      </div>
+    </section>
+
+  </main>
+
+</div>
+
+<script>
+function goDashboard(){ window.location.href="dashboard.html"; }
+function goPatients(){ window.location.href="patients.html"; }
+function goAppointments(){ window.location.href="appointments.html"; }
+function goTreatments(){ window.location.href="treatments.html"; }
+function goInvoices(){ window.location.href="invoices.html"; }
+function goPayments(){ window.location.href="payments.html"; }
+function goExpenses(){ window.location.href="expenses.html"; }
+function goLab(){ window.location.href="lab.html"; }
+function goSuppliers(){ window.location.href="suppliers.html"; }
+
+function logout(){
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  window.location.href="login.html";
+}
+
+function contactDeveloper(){
+  window.open("https://wa.me/963995339401", "_blank");
+}
+
+const revealItems = document.querySelectorAll(".reveal");
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add("show");
+    }
+  });
+},{threshold:0.15});
+
+revealItems.forEach(el=>observer.observe(el));
+</script>
+
+</body>
+</html>

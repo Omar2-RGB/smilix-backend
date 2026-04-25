@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smilix Login</title>
+  <style>
+    :root {
+      --bg-1: #07121d;
+      --bg-2: #0d2233;
+      --panel: rgba(255, 255, 255, 0.07);
+      --panel-strong: rgba(255, 255, 255, 0.1);
+      --line: rgba(255, 255, 255, 0.1);
+      --text: #eef8ff;
+      --muted: #a9bfd1;
+      --primary: #35a8ff;
+      --primary-2: #2ce0c7;
+      --danger: #ff8fa3;
+      --input: rgba(255, 255, 255, 0.06);
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(53,168,255,0.20), transparent 24%),
+        radial-gradient(circle at 85% 20%, rgba(44,224,199,0.12), transparent 20%),
+        radial-gradient(circle at 50% 100%, rgba(53,168,255,0.16), transparent 24%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      overflow: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(70px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      width: 260px;
+      height: 260px;
+      background: rgba(53,168,255,0.18);
+      top: -50px;
+      left: -40px;
+    }
+
+    body::after {
+      width: 340px;
+      height: 340px;
+      background: rgba(44,224,199,0.12);
+      bottom: -80px;
+      right: -60px;
+    }
+
+    .grid-lines {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: radial-gradient(circle at center, black 45%, transparent 90%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .cursor-glow {
+      width: 26px;
+      height: 26px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      border-radius: 50%;
+      pointer-events: none;
+      background: rgba(53,168,255,0.35);
+      filter: blur(10px);
+      z-index: 2;
+      transform: translate(-50%, -50%);
+      transition: transform 0.03s linear;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .shell {
+  width: min(1280px, 100%);
+  height: calc(100vh - 24px);
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  border-radius: 28px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+}
+
+    .brand-panel {
+      position: relative;
+      padding: 42px;
+      border-left: 1px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(53,168,255,0.12), transparent 28%),
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+      overflow: hidden;
+    }
+
+    .brand-panel::after {
+      content: "";
+      position: absolute;
+      width: 620px;
+      height: 620px;
+      left: -220px;
+      bottom: -230px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(53,168,255,0.20), transparent 68%);
+      animation: floatGlow 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes floatGlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-26px); }
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-wrap {
+      width: 100px;
+      height: 100px;
+      border-radius: 24px;
+      overflow: hidden;
+      background: linear-gradient(145deg, rgba(53,168,255,0.25), rgba(44,224,199,0.14));
+      border: 1px solid rgba(255,255,255,0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 12px 30px rgba(10,25,40,0.24);
+      flex-shrink: 0;
+    }
+
+    .logo-wrap img {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
+    }
+
+    .brand-name {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-sub {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      color: #d3ebfb;
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(135deg, rgba(53,168,255,0.22), rgba(44,224,199,0.18));
+      color: white;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #d9f2ff;
+      font-size: 13px;
+      margin: 18px 0 16px;
+      width: fit-content;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 0 18px rgba(53,168,255,0.85);
+    }
+
+    .hero h1 {
+      margin: 0 0 18px;
+      font-size: 60px;
+      line-height: 1.02;
+      letter-spacing: -1.8px;
+      max-width: 620px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(90deg, #ffffff, #89e5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.8;
+      max-width: 560px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+      max-width: 680px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      transition: 0.3s;
+    }
+
+    .stat:hover {
+      transform: translateY(-5px);
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.28);
+    }
+
+    .stat h3 {
+      margin: 0 0 6px;
+      font-size: 24px;
+    }
+
+    .stat p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .feature-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .pill {
+      padding: 10px 15px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #dcefff;
+      font-size: 13px;
+    }
+
+    .brand-footer {
+      color: #88a7bf;
+      font-size: 12px;
+    }
+
+    .brand-footer strong {
+      color: #d8f2ff;
+    }
+
+    .login-panel {
+      padding: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 410px;
+      padding: 26px;
+      border-radius: 24px;
+      background: rgba(6, 19, 31, 0.56);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(30px) saturate(140%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 50px rgba(0,0,0,0.26);
+    }
+
+    .mini-badge {
+      display: inline-flex;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(53,168,255,0.12);
+      color: #d7f2ff;
+      border: 1px solid rgba(53,168,255,0.2);
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+
+    .login-card h2 {
+      margin: 0;
+      font-size: 34px;
+      letter-spacing: -0.8px;
+    }
+
+    .subtext {
+      color: var(--muted);
+      margin: 10px 0 28px;
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: #dbeefe;
+      margin-bottom: 10px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap input {
+      width: 100%;
+      height: 58px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: var(--input);
+      color: white;
+      border-radius: 18px;
+      padding: 0 16px;
+      font-size: 15px;
+      outline: none;
+      transition: 0.25s ease;
+    }
+
+    .input-wrap input::placeholder {
+      color: #89a7bc;
+    }
+
+    .input-wrap input:focus {
+      border-color: rgba(53,168,255,0.55);
+      box-shadow: 0 0 0 4px rgba(53,168,255,0.12);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .password-tools {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 8px 0 20px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .remember input {
+      accent-color: var(--primary);
+    }
+
+    .password-tools a {
+      color: #8edfff;
+      text-decoration: none;
+    }
+
+    .login-btn {
+      width: 100%;
+      height: 58px;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 18px 34px rgba(53,168,255,0.24);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 22px 36px rgba(53,168,255,0.3);
+    }
+
+    .login-btn::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 50%;
+      transform: scale(0);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .login-btn:active::after {
+      transform: scale(1);
+      opacity: 1;
+      transition: 0s;
+    }
+
+    .login-btn:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+
+    .error-box {
+      min-height: 22px;
+      margin-top: 16px;
+      color: var(--danger);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .login-footer {
+      margin-top: 24px;
+      text-align: center;
+      color: #89a7bc;
+      font-size: 12px;
+    }
+ .password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  width: 100%;
+  height: 58px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--input);
+  color: white;
+  border-radius: 18px;
+  padding: 0 52px 0 16px; /* مساحة للعين */
+  font-size: 15px;
+  outline: none;
+  transition: 0.25s ease;
+}
+
+html[dir="rtl"] .password-wrapper input {
+  padding: 0 16px 0 52px;
+}
+
+.eye {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 16px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  user-select: none;
+  opacity: 0.8;
+  transition: 0.2s ease;
+  z-index: 2;
+}
+
+html[dir="ltr"] .eye {
+  left: auto;
+  right: 16px;
+}
+
+.eye:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.08);
+}
+    @media (max-width: 980px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-panel {
+        border-left: none;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .hero h1 {
+        font-size: 42px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        padding: 14px;
+      }
+
+      .brand-panel,
+      .login-panel {
+        padding: 28px;
+      }
+
+      .login-card {
+        padding: 24px;
+        border-radius: 22px;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+   
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-lines"></div>
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <div class="page">
+    <div class="shell">
+      <section class="brand-panel">
+        <div>
+          <div class="toolbar">
+            <div class="topbar">
+              <div class="logo-wrap">
+                <img src="assets/logo.png" alt="Smilix Logo" />
+              </div>
+              <div>
+                <div class="brand-name">Smilix</div>
+                <div class="brand-sub" id="brandSub">Dental Clinic Management Platform</div>
+              </div>
+            </div>
+
+            <div class="lang-switch">
+              <button class="lang-btn active" id="arBtn" onclick="setLanguage('ar')">AR</button>
+              <button class="lang-btn" id="enBtn" onclick="setLanguage('en')">EN</button>
+            </div>
+          </div>
+
+          <div class="hero">
+            <div class="eyebrow">
+              <span class="dot"></span>
+              <span id="eyebrowText">منصة ذكية لإدارة عيادات الأسنان الحديثة</span>
+            </div>
+
+            <h1 id="heroTitle">
+              شغّل عيادتك <span>بوضوح، سرعة، وأناقة.</span>
+            </h1>
+
+            <p id="heroDesc">
+              يساعدك Smilix على إدارة المرضى والمواعيد والعلاجات والدفعات
+              والعمليات اليومية من خلال تجربة مكتبية حديثة واحترافية.
+            </p>
+
+            <div class="stats">
+              <div class="stat">
+                <h3>24/7</h3>
+                <p id="stat1">وصول سريع إلى ملفات المرضى والفواتير والمواعيد.</p>
+              </div>
+              <div class="stat">
+                <h3 id="stat2Title">ذكي</h3>
+                <p id="stat2">مصمم لسير عمل سلس بواجهة حديثة ومتميزة.</p>
+              </div>
+              <div class="stat">
+                <h3 id="stat3Title">آمن</h3>
+                <p id="stat3">دخول محمي وصلاحيات مستخدمين وتدفق بيانات منظم.</p>
+              </div>
+            </div>
+
+            <div class="feature-bar">
+              <div class="pill" id="pill1">المرضى</div>
+              <div class="pill" id="pill2">المواعيد</div>
+              <div class="pill" id="pill3">العلاجات</div>
+              <div class="pill" id="pill4">الدفعات</div>
+              <div class="pill" id="pill5">التقارير</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="brand-footer" id="brandFooter">
+          Powered by <strong>Smilix</strong> • Dental Tech Experience
+        </div>
+      </section>
+
+      <section class="login-panel">
+        <div class="login-card">
+          <div class="mini-badge" id="secureBadge">دخول آمن</div>
+          <h2 id="welcomeTitle">أهلًا بعودتك</h2>
+          <div class="subtext" id="welcomeDesc">
+            سجّل الدخول للمتابعة إلى لوحة تحكم العيادة.
+          </div>
+
+          <div class="field">
+            <label for="username" id="usernameLabel">اسم المستخدم</label>
+            <div class="input-wrap">
+              <input id="username" type="text" placeholder="أدخل اسم المستخدم" />
+            </div>
+          </div>
+<div class="field">
+  <label for="password" id="passwordLabel">كلمة المرور</label>
+
+  <div class="password-wrapper">
+    <input
+      id="password"
+      type="password"
+      placeholder="أدخل كلمة المرور"
+    />
+
+    <span id="togglePassword" class="eye">👁</span>
+  </div>
+</div>
+
+          <div class="password-tools">
+            <label class="remember">
+              <input id="rememberMe" type="checkbox" />
+              <span id="rememberText">تذكرني</span>
+            </label>
+            <a href="#" id="helpText">تحتاج مساعدة؟</a>
+          </div>
+
+          <button id="loginBtn" class="login-btn" onclick="login()">تسجيل الدخول</button>
+          <div id="error" class="error-box"></div>
+
+          <div class="login-footer" id="loginFooter">
+            Smilix v1.0 • Secure desktop login
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const cursorGlow = document.getElementById("cursorGlow");
+    document.addEventListener("mousemove", (e) => {
+      cursorGlow.style.left = e.clientX + "px";
+      cursorGlow.style.top = e.clientY + "px";
+    });
+
+    const translations = {
+      ar: {
+        dir: "rtl",
+        brandSub: "منصة إدارة عيادات الأسنان",
+        eyebrowText: "منصة ذكية لإدارة عيادات الأسنان الحديثة",
+        heroTitle: `شغّل عيادتك <span>بوضوح، سرعة، وأناقة.</span>`,
+        heroDesc: "يساعدك Smilix على إدارة المرضى والمواعيد والعلاجات والدفعات والعمليات اليومية من خلال تجربة مكتبية حديثة واحترافية.",
+        stat1: "وصول سريع إلى ملفات المرضى والفواتير والمواعيد.",
+        stat2Title: "ذكي",
+        stat2: "مصمم لسير عمل سلس بواجهة حديثة ومتميزة.",
+        stat3Title: "آمن",
+        stat3: "دخول محمي وصلاحيات مستخدمين وتدفق بيانات منظم.",
+        pill1: "المرضى",
+        pill2: "المواعيد",
+        pill3: "العلاجات",
+        pill4: "الدفعات",
+        pill5: "التقارير",
+        brandFooter: `Powered by <strong>Smilix</strong> • Dental Tech Experience`,
+        secureBadge: "دخول آمن",
+        welcomeTitle: "أهلًا بعودتك",
+        welcomeDesc: "سجّل الدخول للمتابعة إلى لوحة تحكم العيادة.",
+        usernameLabel: "اسم المستخدم",
+        passwordLabel: "كلمة المرور",
+        usernamePlaceholder: "أدخل اسم المستخدم",
+        passwordPlaceholder: "أدخل كلمة المرور",
+        rememberText: "تذكرني",
+        helpText: "تحتاج مساعدة؟",
+        loginBtn: "تسجيل الدخول",
+        loginFooter: "Smilix v1.0 • تسجيل دخول مكتبي آمن",
+        emptyError: "يرجى إدخال اسم المستخدم وكلمة المرور.",
+        connectError: "تعذر الاتصال بالخادم."
+      },
+      en: {
+        dir: "ltr",
+        brandSub: "Dental Clinic Management Platform",
+        eyebrowText: "Smart workflow for modern dental clinics",
+        heroTitle: `Run your clinic with <span>clarity, speed, and style.</span>`,
+        heroDesc: "Smilix helps your team manage patients, appointments, treatments, payments, and daily operations through a modern desktop experience.",
+        stat1: "Fast access to patient records, invoices, and schedules.",
+        stat2Title: "Smart",
+        stat2: "Built for smooth workflows with a premium modern interface.",
+        stat3Title: "Secure",
+        stat3: "Authentication, role-based access, and structured data flow.",
+        pill1: "Patients",
+        pill2: "Appointments",
+        pill3: "Treatments",
+        pill4: "Payments",
+        pill5: "Reports",
+        brandFooter: `Powered by <strong>Smilix</strong> • Dental Tech Experience`,
+        secureBadge: "Secure Access",
+        welcomeTitle: "Welcome back",
+        welcomeDesc: "Sign in to continue to your clinic dashboard.",
+        usernameLabel: "Username",
+        passwordLabel: "Password",
+        usernamePlaceholder: "Enter your username",
+        passwordPlaceholder: "Enter your password",
+        rememberText: "Remember me",
+        helpText: "Need help?",
+        loginBtn: "Sign In",
+        loginFooter: "Smilix v1.0 • Secure desktop login",
+        emptyError: "Please enter your username and password.",
+        connectError: "Unable to connect to the server."
+      }
+      
+    };
+
+    let currentLang = localStorage.getItem("lang") || "ar";
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem("lang", lang);
+
+      const t = translations[lang];
+      document.documentElement.lang = lang;
+      document.documentElement.dir = t.dir;
+
+      document.getElementById("brandSub").textContent = t.brandSub;
+      document.getElementById("eyebrowText").textContent = t.eyebrowText;
+      document.getElementById("heroTitle").innerHTML = t.heroTitle;
+      document.getElementById("heroDesc").textContent = t.heroDesc;
+      document.getElementById("stat1").textContent = t.stat1;
+      document.getElementById("stat2Title").textContent = t.stat2Title;
+      document.getElementById("stat2").textContent = t.stat2;
+      document.getElementById("stat3Title").textContent = t.stat3Title;
+      document.getElementById("stat3").textContent = t.stat3;
+      document.getElementById("pill1").textContent = t.pill1;
+      document.getElementById("pill2").textContent = t.pill2;
+      document.getElementById("pill3").textContent = t.pill3;
+      document.getElementById("pill4").textContent = t.pill4;
+      document.getElementById("pill5").textContent = t.pill5;
+      document.getElementById("brandFooter").innerHTML = t.brandFooter;
+      document.getElementById("secureBadge").textContent = t.secureBadge;
+      document.getElementById("welcomeTitle").textContent = t.welcomeTitle;
+      document.getElementById("welcomeDesc").textContent = t.welcomeDesc;
+      document.getElementById("usernameLabel").textContent = t.usernameLabel;
+      document.getElementById("passwordLabel").textContent = t.passwordLabel;
+      document.getElementById("username").placeholder = t.usernamePlaceholder;
+      document.getElementById("password").placeholder = t.passwordPlaceholder;
+      document.getElementById("rememberText").textContent = t.rememberText;
+      document.getElementById("helpText").textContent = t.helpText;
+      document.getElementById("loginBtn").textContent = t.loginBtn;
+      document.getElementById("loginFooter").textContent = t.loginFooter;
+
+      document.getElementById("arBtn").classList.toggle("active", lang === "ar");
+      document.getElementById("enBtn").classList.toggle("active", lang === "en");
+    }
+
+    function setLanguage(lang) {
+      applyLanguage(lang);
+    }
+
+    if (localStorage.getItem("token")) {
+      window.location.href = "dashboard.html";
+    }
+
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const errorDiv = document.getElementById("error");
+    const loginBtn = document.getElementById("loginBtn");
+
+    async function login() {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+      const t = translations[currentLang];
+
+      errorDiv.textContent = "";
+
+      if (!username || !password) {
+        errorDiv.textContent = t.emptyError;
+        return;
+      }
+
+      try {
+        loginBtn.disabled = true;
+        loginBtn.textContent = currentLang === "ar" ? "جاري الدخول..." : "Signing in...";
+
+        const res = await fetch("http://127.0.0.1:5000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          window.location.href = "dashboard.html";
+          return;
+        }
+
+        errorDiv.textContent = data.message || "Login failed.";
+      } catch (error) {
+        errorDiv.textContent = t.connectError;
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = translations[currentLang].loginBtn;
+      }
+    }
+
+    passwordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") login();
+    });
+
+    usernameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") login();
+    });
+
+    applyLanguage(currentLang);
+    const toggle = document.getElementById("togglePassword");
+
+toggle.addEventListener("click", () => {
+  const isHidden = passwordInput.type === "password";
+  passwordInput.type = isHidden ? "text" : "password";
+  toggle.textContent = isHidden ? "🙈" : "👁";
+});
+  </script>
+</body>
+</html>

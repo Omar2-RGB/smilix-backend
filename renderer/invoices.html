@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smilix Invoices</title>
+  <style>
+    :root {
+      --bg-1: #07121d;
+      --bg-2: #0d2233;
+      --panel: rgba(255,255,255,0.06);
+      --line: rgba(255,255,255,0.08);
+      --text: #eef8ff;
+      --muted: #9db6ca;
+      --primary: #35a8ff;
+      --primary-2: #2ce0c7;
+      --danger: #ff7b9c;
+      --success: #36d399;
+      --warning: #ffb84d;
+      --shadow: 0 20px 50px rgba(0,0,0,0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(53,168,255,0.18), transparent 24%),
+        radial-gradient(circle at 85% 15%, rgba(44,224,199,0.10), transparent 20%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      color: var(--text);
+      overflow-x: hidden;
+      overflow-y: auto;    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      height: 100vh;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .brand-logo {
+      width: 68px;
+      height: 68px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(53,168,255,0.25), rgba(44,224,199,0.14));
+      border: 1px solid rgba(255,255,255,0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .brand-logo img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav-title {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 0 12px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      height: 52px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(53,168,255,0.18), rgba(44,224,199,0.12));
+      border-color: rgba(53,168,255,0.22);
+      transform: translateY(-1px);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+    }
+
+    .logout-btn {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--danger), #ff5f7c);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .content {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      border: none;
+      color: white;
+      font-weight: 700;
+    }
+
+    .btn.danger {
+      background: linear-gradient(135deg, var(--danger), #ff5f7c);
+      border: none;
+      color: white;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 220px auto;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .search-input,
+    .filter-select {
+      height: 48px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      padding: 0 14px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1300px;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    th {
+      background: rgba(255,255,255,0.04);
+      color: #dcefff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .action-cell {
+      display: flex;
+      gap: 8px;
+    }
+
+    .mini-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      color: white;
+      font-size: 12px;
+    }
+
+    .edit-btn { background: #2f86ff; }
+    .delete-btn { background: #ff5f7c; }
+
+    .status-badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .status-unpaid {
+      background: rgba(255,123,156,0.16);
+      color: #ffb2c4;
+    }
+
+    .status-partial {
+      background: rgba(255,184,77,0.16);
+      color: #ffd387;
+    }
+
+    .status-paid {
+      background: rgba(54,211,153,0.16);
+      color: #8ff0c0;
+    }
+
+    .empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 900px;
+      background: #102638;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      max-height: 90vh;
+      overflow: auto;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 13px;
+      color: #dcefff;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      height: 46px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      padding: 0 12px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .field textarea {
+      height: 100px;
+      resize: vertical;
+      padding-top: 12px;
+    }
+
+    .items-box {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .items-box h4 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .invoice-item-row {
+      display: grid;
+      grid-template-columns: 2fr 100px 140px 140px auto;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .invoice-item-row input {
+      width: 100%;
+      height: 42px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      padding: 0 12px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .invoice-items-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .invoice-total-box {
+      margin-top: 12px;
+      color: #dcefff;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .modal-actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-start;
+    }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .invoice-item-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    .field select,
+select {
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  padding: 0 12px;
+  outline: none;
+  font-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.field select option,
+select option {
+  background-color: #102638;
+  color: #eef8ff;
+}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="brand-logo">
+            <img src="assets/logo.png" alt="Smilix Logo" />
+          </div>
+          <div>
+            <h1>Smilix</h1>
+            <p>منصة إدارة عيادات الأسنان</p>
+          </div>
+        </div>
+
+        <div class="nav-title">القائمة الرئيسية</div>
+
+     <div class="nav">
+  <button id="nav-dashboard" class="nav-btn" onclick="goToDashboard()"><span>لوحة التحكم</span><span>🏠</span></button>
+  <button id="nav-patients" class="nav-btn" onclick="goToPatients()"><span>المرضى</span><span>👤</span></button>
+  <button id="nav-appointments" class="nav-btn" onclick="goToAppointments()"><span>المواعيد</span><span>📅</span></button>
+  <button id="nav-treatments" class="nav-btn" onclick="goToTreatments?.()"><span>العلاجات</span><span>🦷</span></button>
+  <button id="nav-invoices" class="nav-btn" onclick="goToInvoices()"><span>الفواتير</span><span>🧾</span></button>
+  <button id="nav-payments" class="nav-btn" onclick="goToPayments()"><span>الدفعات</span><span>💳</span></button>
+  <button id="nav-users" class="nav-btn" onclick="goToUsers?.()"><span>المستخدمون</span><span>👨‍💼</span></button>
+</div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="topbar">
+        <div>
+          <h2>الفواتير</h2>
+          <p>إنشاء وإدارة فواتير المرضى.</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" onclick="openCreateModal()">+ إضافة فاتورة</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="toolbar">
+          <input id="searchInput" class="search-input" type="text" placeholder="ابحث باسم المريض أو الهاتف أو الكود" />
+          <select id="statusFilter" class="filter-select">
+            <option value="">كل الحالات</option>
+            <option value="unpaid">غير مدفوعة</option>
+            <option value="partial">مدفوعة جزئيًا</option>
+            <option value="paid">مدفوعة</option>
+          </select>
+          <button class="btn" onclick="loadInvoices()">بحث</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>رقم الفاتورة</th>
+                <th>المريض</th>
+                <th>التاريخ</th>
+                <th>الإجمالي</th>
+                <th>المدفوع</th>
+                <th>الباقي</th>
+                <th>الحالة</th>
+                <th>ملاحظات</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesTableBody"></tbody>
+          </table>
+          <div id="emptyState" class="empty" style="display:none;">لا توجد فواتير بعد.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="invoiceModal" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="modalTitle">إضافة فاتورة</h3>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>المريض</label>
+          <select id="patientId"></select>
+        </div>
+
+        <div class="field">
+          <label>تاريخ الفاتورة</label>
+          <input id="invoiceDate" type="date" />
+        </div>
+
+        <div class="field full">
+          <label>ملاحظات</label>
+          <textarea id="notes"></textarea>
+        </div>
+      </div>
+
+      <div class="items-box">
+        <h4>بنود الفاتورة</h4>
+        <div id="invoiceItemsList" class="invoice-items-list"></div>
+        <button class="btn" type="button" onclick="addInvoiceItem()">+ إضافة بند</button>
+        <div class="invoice-total-box">
+          الإجمالي: <span id="invoiceTotal">0</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn primary" onclick="saveInvoice()">حفظ</button>
+        <button class="btn" onclick="closeModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+<script>
+  const permissions = {
+    admin: ["dashboard", "patients", "appointments", "treatments", "payments", "invoices", "users"],
+    doctor: ["dashboard", "patients", "appointments", "treatments"],
+    receptionist: ["dashboard", "patients", "appointments"],
+    accountant: ["dashboard", "payments", "invoices"]
+  };
+
+  function getCurrentUser() {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  }
+
+  function getUserRole() {
+    const user = getCurrentUser();
+    if (!user) return null;
+
+    if (user.role?.name) return user.role.name.toLowerCase();
+    if (typeof user.role === "string") return user.role.toLowerCase();
+
+    return null;
+  }
+
+  function canAccess(page) {
+    const role = getUserRole();
+    if (!role) return false;
+
+    const allowedPages = permissions[role] || [];
+    return allowedPages.includes(page);
+  }
+
+  function protectPage(page) {
+    if (!canAccess(page)) {
+      alert("ما عندك صلاحية للدخول إلى هذه الصفحة");
+      window.location.href = "dashboard.html";
+    }
+  }
+
+  function hideNavIfNoAccess(elementId, page) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+
+    if (!canAccess(page)) {
+      element.style.display = "none";
+    }
+  }
+
+  function applySidebarPermissions() {
+    hideNavIfNoAccess("nav-dashboard", "dashboard");
+    hideNavIfNoAccess("nav-patients", "patients");
+    hideNavIfNoAccess("nav-appointments", "appointments");
+    hideNavIfNoAccess("nav-treatments", "treatments");
+    hideNavIfNoAccess("nav-payments", "payments");
+    hideNavIfNoAccess("nav-invoices", "invoices");
+    hideNavIfNoAccess("nav-users", "users");
+  }
+</script>
+  <script>
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+
+    if (!token || !user) {
+      window.location.href = "login.html";
+    }
+protectPage("invoices");
+    const apiBase = "http://127.0.0.1:5000/api/invoices";
+    let editingInvoiceId = null;
+    let allPatients = [];
+
+    function goToDashboard() {
+      window.location.href = "dashboard.html";
+    }
+
+    function goToPatients() {
+      window.location.href = "patients.html";
+    }
+
+    function goToAppointments() {
+      window.location.href = "appointments.html";
+    }
+
+    function goToPayments() {
+      window.location.href = "payments.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return "-";
+      return new Date(dateString).toLocaleDateString("ar-EG", {
+        weekday: "long",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    }
+
+    function getStatusText(status) {
+      switch (status) {
+        case "unpaid": return "غير مدفوعة";
+        case "partial": return "مدفوعة جزئيًا";
+        case "paid": return "مدفوعة";
+        default: return status || "-";
+      }
+    }
+
+    async function loadPatients() {
+      const res = await fetch("http://127.0.0.1:5000/api/patients", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) throw new Error("Failed to load patients");
+
+      allPatients = await res.json();
+      const select = document.getElementById("patientId");
+      select.innerHTML = `<option value="">اختر المريض</option>`;
+
+      allPatients.forEach((patient) => {
+        select.innerHTML += `<option value="${patient.id}">${patient.fullName} - ${patient.phone || "-"}</option>`;
+      });
+    }
+
+    async function loadInvoices() {
+      try {
+        const search = document.getElementById("searchInput").value.trim();
+        const status = document.getElementById("statusFilter").value;
+
+        const query = new URLSearchParams();
+        if (search) query.append("search", search);
+        if (status) query.append("status", status);
+
+        const res = await fetch(`${apiBase}?${query.toString()}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error("Failed to load invoices");
+
+        const invoices = await res.json();
+        const tableBody = document.getElementById("invoicesTableBody");
+        const emptyState = document.getElementById("emptyState");
+
+        tableBody.innerHTML = "";
+
+        if (!invoices.length) {
+          emptyState.style.display = "block";
+          return;
+        }
+
+        emptyState.style.display = "none";
+
+        invoices.forEach((item) => {
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td>${item.invoiceNumber || "-"}</td>
+            <td>${item.patient?.fullName || "-"}</td>
+            <td>${formatDate(item.invoiceDate)}</td>
+            <td>${item.totalAmount ?? 0}</td>
+            <td>${item.paidAmount ?? 0}</td>
+            <td>${item.remainingAmount ?? 0}</td>
+            <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
+            <td>${item.notes || "-"}</td>
+            <td>
+              <div class="action-cell">
+                <button class="mini-btn edit-btn">تعديل</button>
+                <button class="mini-btn delete-btn">حذف</button>
+              </div>
+            </td>
+          `;
+
+          tr.querySelector(".edit-btn").addEventListener("click", () => openEditModal(item));
+          tr.querySelector(".delete-btn").addEventListener("click", () => deleteInvoice(item.id));
+
+          tableBody.appendChild(tr);
+        });
+      } catch (error) {
+        console.error("Load invoices error:", error);
+        alert("تعذر تحميل الفواتير");
+      }
+    }
+
+    function openCreateModal() {
+      editingInvoiceId = null;
+      document.getElementById("modalTitle").textContent = "إضافة فاتورة";
+      resetForm();
+      document.getElementById("invoiceModal").classList.add("show");
+    }
+
+    function openEditModal(item) {
+      editingInvoiceId = item.id;
+      document.getElementById("modalTitle").textContent = "تعديل فاتورة";
+
+      document.getElementById("patientId").value = item.patientId || "";
+      document.getElementById("invoiceDate").value = item.invoiceDate ? item.invoiceDate.split("T")[0] : "";
+      document.getElementById("notes").value = item.notes || "";
+
+      const itemsList = document.getElementById("invoiceItemsList");
+      itemsList.innerHTML = "";
+
+      if (item.invoiceItems?.length) {
+        item.invoiceItems.forEach((invoiceItem) => {
+          addInvoiceItem(
+            invoiceItem.description || "",
+            invoiceItem.quantity || 1,
+            invoiceItem.unitPrice || 0,
+            invoiceItem.amount || 0
+          );
+        });
+      } else {
+        addInvoiceItem();
+      }
+
+      calculateInvoiceTotal();
+      document.getElementById("invoiceModal").classList.add("show");
+    }
+
+    function closeModal() {
+      document.getElementById("invoiceModal").classList.remove("show");
+    }
+
+    function resetForm() {
+      document.getElementById("patientId").value = "";
+      document.getElementById("invoiceDate").value = new Date().toISOString().split("T")[0];
+      document.getElementById("notes").value = "";
+      document.getElementById("invoiceItemsList").innerHTML = "";
+      addInvoiceItem();
+      calculateInvoiceTotal();
+    }
+
+    function addInvoiceItem(description = "", quantity = 1, unitPrice = 0, amount = 0) {
+      const itemsList = document.getElementById("invoiceItemsList");
+
+      const row = document.createElement("div");
+      row.className = "invoice-item-row";
+
+      row.innerHTML = `
+        <input class="item-description" type="text" placeholder="الوصف" value="${description}" />
+        <input class="item-quantity" type="number" min="1" value="${quantity}" />
+        <input class="item-unit-price" type="number" step="0.01" value="${unitPrice}" />
+        <input class="item-amount" type="number" step="0.01" value="${amount}" />
+        <button class="btn danger" type="button">حذف</button>
+      `;
+
+      const qtyInput = row.querySelector(".item-quantity");
+      const unitPriceInput = row.querySelector(".item-unit-price");
+      const amountInput = row.querySelector(".item-amount");
+      const deleteBtn = row.querySelector(".btn");
+
+      function autoCalcAmount() {
+        const qty = Number(qtyInput.value || 0);
+        const unitPrice = Number(unitPriceInput.value || 0);
+        amountInput.value = qty * unitPrice;
+        calculateInvoiceTotal();
+      }
+
+      qtyInput.addEventListener("input", autoCalcAmount);
+      unitPriceInput.addEventListener("input", autoCalcAmount);
+      amountInput.addEventListener("input", calculateInvoiceTotal);
+
+      deleteBtn.addEventListener("click", () => {
+        row.remove();
+        calculateInvoiceTotal();
+      });
+
+      itemsList.appendChild(row);
+      calculateInvoiceTotal();
+    }
+
+    function calculateInvoiceTotal() {
+      const amounts = document.querySelectorAll(".item-amount");
+      let total = 0;
+
+      amounts.forEach((input) => {
+        total += Number(input.value || 0);
+      });
+
+      document.getElementById("invoiceTotal").textContent = total;
+    }
+
+    async function saveInvoice() {
+      try {
+        const itemRows = document.querySelectorAll(".invoice-item-row");
+        const items = [];
+itemRows.forEach((row) => {
+  items.push({
+    itemName: row.querySelector(".item-description").value,
+    qty: row.querySelector(".item-quantity").value,
+    unitPrice: row.querySelector(".item-unit-price").value,
+    totalPrice: row.querySelector(".item-amount").value,
+  });
+});
+
+        const payload = {
+          patientId: document.getElementById("patientId").value,
+          invoiceDate: document.getElementById("invoiceDate").value,
+          notes: document.getElementById("notes").value,
+          items,
+        };
+
+        if (!payload.patientId || !payload.invoiceDate) {
+          alert("المريض وتاريخ الفاتورة مطلوبان");
+          return;
+        }
+
+        const method = editingInvoiceId ? "PUT" : "POST";
+        const url = editingInvoiceId ? `${apiBase}/${editingInvoiceId}` : apiBase;
+
+        const res = await fetch(url, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Failed to save invoice");
+
+        closeModal();
+        loadInvoices();
+        localStorage.setItem("refreshDashboard", "true");
+      } catch (error) {
+        console.error("Save invoice error:", error);
+        alert("تعذر حفظ الفاتورة");
+      }
+    }
+
+    async function deleteInvoice(id) {
+      const confirmed = confirm("هل أنت متأكد من حذف الفاتورة؟");
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch(`${apiBase}/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.message || "Failed to delete invoice");
+
+        loadInvoices();
+        localStorage.setItem("refreshDashboard", "true");
+      } catch (error) {
+        console.error("Delete invoice error:", error);
+        alert("تعذر حذف الفاتورة");
+      }
+    }
+
+    document.getElementById("searchInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loadInvoices();
+    });
+
+    async function initPage() {
+      try {
+       applySidebarPermissions();
+        await loadPatients();
+        await loadInvoices();
+      } catch (error) {
+        console.error("Invoices page init error:", error);
+        alert("تعذر تحميل صفحة الفواتير");
+      }
+    }
+
+    initPage();
+  </script>
+</body>
+</html>

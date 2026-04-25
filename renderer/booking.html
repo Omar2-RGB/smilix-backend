@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>عيادة Smilix لطب الأسنان</title>
+  <style>
+    :root {
+      --bg-1: #07121d;
+      --bg-2: #0d2233;
+      --panel: rgba(255,255,255,0.06);
+      --panel-2: rgba(255,255,255,0.04);
+      --line: rgba(255,255,255,0.08);
+      --text: #eef8ff;
+      --muted: #9db6ca;
+      --primary: #35a8ff;
+      --primary-2: #2ce0c7;
+      --success: #36d399;
+      --danger: #ff7b9c;
+      --warning: #ffb84d;
+      --shadow: 0 20px 50px rgba(0,0,0,0.28);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(53,168,255,0.18), transparent 24%),
+        radial-gradient(circle at 85% 15%, rgba(44,224,199,0.10), transparent 20%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(18px);
+      background: rgba(7, 18, 29, 0.72);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .header-inner {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 10px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(53,168,255,0.24), rgba(44,224,199,0.16));
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      padding: 10px 14px;
+      border-radius: 14px;
+      color: var(--text);
+      font-size: 14px;
+      transition: 0.2s ease;
+    }
+
+    .nav a:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    .nav .cta {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 48px 0 26px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .hero-card,
+    .section-card,
+    .booking-card,
+    .info-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-card {
+      padding: 30px;
+    }
+
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(53,168,255,0.12);
+      color: #cce9ff;
+      border: 1px solid rgba(53,168,255,0.24);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .hero h2 {
+      margin: 0 0 12px;
+      font-size: 44px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.9;
+      font-size: 16px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .btn {
+      min-height: 48px;
+      padding: 0 18px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      font-weight: 700;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hero-side {
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 16px;
+    }
+
+    .info-card {
+      padding: 22px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .stat {
+      background: var(--panel-2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat .value {
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .quick-contact {
+      display: grid;
+      gap: 12px;
+    }
+
+    .quick-contact a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 54px;
+      padding: 0 16px;
+      border-radius: 16px;
+      background: var(--panel-2);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .section {
+      padding: 12px 0 8px;
+    }
+
+    .section-head {
+      margin-bottom: 16px;
+    }
+
+    .section-head h3 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .services-grid,
+    .features-grid,
+    .reviews-grid,
+    .contact-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .services-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .features-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .reviews-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .contact-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .section-card {
+      padding: 22px;
+    }
+
+    .service-icon,
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, rgba(53,168,255,0.22), rgba(44,224,199,0.14));
+      border: 1px solid rgba(255,255,255,0.10);
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+
+    .section-card h4 {
+      margin: 0 0 10px;
+      font-size: 19px;
+    }
+
+    .section-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .review-stars {
+      color: #ffd67a;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .review-name {
+      margin-top: 14px;
+      font-weight: 700;
+    }
+
+    .review-role {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .schedule-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .schedule-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: var(--panel-2);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .map-frame {
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+      min-height: 360px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .map-frame iframe {
+      width: 100%;
+      height: 360px;
+      border: none;
+      filter: saturate(0.85) contrast(1.02);
+    }
+
+    .booking {
+      padding: 16px 0 26px;
+    }
+
+    .booking-card {
+      padding: 24px;
+    }
+
+    .booking-grid {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 18px;
+    }
+
+    .booking-side {
+      display: grid;
+      gap: 16px;
+    }
+
+    .booking-note {
+      padding: 18px;
+      border-radius: 18px;
+      background: var(--panel-2);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .booking-note h4 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .booking-note p,
+    .booking-note li {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .booking-note ul {
+      margin: 10px 0 0;
+      padding: 0 18px 0 0;
+    }
+
+    .booking-form-wrap {
+      display: grid;
+      gap: 14px;
+    }
+
+    .slots-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+      max-height: 350px;
+      overflow-y: auto;
+      padding-left: 4px;
+    }
+
+    .slot-item {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.04);
+      border-radius: 16px;
+      padding: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .slot-item:hover,
+    .slot-item.active {
+      background: rgba(53,168,255,0.14);
+      border-color: rgba(53,168,255,0.35);
+      transform: translateY(-1px);
+    }
+
+    .slot-date {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .slot-time {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 13px;
+      color: #dcefff;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border-radius: 14px;
+      font-size: 15px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input, select {
+      height: 48px;
+      padding: 0 14px;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      padding: 14px;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #9db6ca;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: rgba(53,168,255,0.45);
+      box-shadow: 0 0 0 3px rgba(53,168,255,0.12);
+    }
+
+    select option {
+      background: #102638;
+      color: white;
+    }
+
+    .empty, .message {
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .message.success {
+      border-color: rgba(54,211,153,0.35);
+      color: #bff7dd;
+    }
+
+    .message.error {
+      border-color: rgba(255,123,156,0.35);
+      color: #ffd3de;
+    }
+
+    .footer {
+      padding: 10px 0 28px;
+    }
+
+    .footer-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.025));
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      color: var(--muted);
+    }
+
+    @media (max-width: 1100px) {
+      .hero-grid,
+      .contact-grid,
+      .booking-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .services-grid,
+      .features-grid,
+      .reviews-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .summary-hide-mobile {
+        display: none;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .hero h2 {
+        font-size: 32px;
+      }
+
+      .services-grid,
+      .features-grid,
+      .reviews-grid,
+      .grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .header-inner {
+        justify-content: center;
+      }
+
+      .brand,
+      .nav {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .container {
+        width: min(100%, calc(100% - 18px));
+      }
+
+      .hero,
+      .section,
+      .booking {
+        padding-top: 14px;
+      }
+    }
+    .section-card img {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: 0.7s ease;
+}
+
+.reveal.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-card,
+.hero-card,
+.info-card,
+.booking-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.section-card:hover,
+.info-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 60px rgba(0,0,0,0.34);
+}
+
+.btn-primary {
+  animation: pulseBtn 2.5s infinite;
+}
+
+@keyframes pulseBtn {
+  0% { box-shadow: 0 0 0 0 rgba(53,168,255,0.35); }
+  70% { box-shadow: 0 0 0 14px rgba(53,168,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(53,168,255,0); }
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -80px;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(53,168,255,0.16), transparent 22%),
+    radial-gradient(circle at 80% 20%, rgba(44,224,199,0.12), transparent 20%);
+  animation: bgMove 10s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes bgMove {
+  from { transform: translate3d(0,0,0) scale(1); }
+  to { transform: translate3d(28px,-24px,0) scale(1.04); }
+}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-badge">🦷</div>
+        <div>
+          <h1>عيادة Smilix الدكتور شعلان عبد العزيز</h1>
+          <p>رعاية أسنان حديثة | مواعيد سهلة | راحة وثقة</p>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="#services">الخدمات</a>
+        <a href="#about">من نحن</a>
+        <a href="#reviews">التقييمات</a>
+        <a href="#location">الموقع</a>
+        <a href="#schedule">الدوام</a>
+        <a href="#booking" class="cta">احجز الآن</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-card">
+          <div class="hero-kicker">⭐ رعاية مريحة ومواعيد مرنة</div>
+          <h2>ابتسامتك تبدأ من هنا</h2>
+          <p>
+            في عيادة Smilix نهتم براحتك قبل كل شيء. نقدم خدمات علاج وتجميل الأسنان
+            بأسلوب حديث، مع متابعة دقيقة للمواعيد وتعقيم عالي المستوى وتجربة مريحة
+            من أول زيارة حتى آخر جلسة.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#booking">احجز موعدك الآن</a>
+            <a class="btn btn-secondary" href="tel:0967258766">📞 اتصل بنا</a>
+            <a class="btn btn-secondary" href="https://wa.me/963967258766" target="_blank">💬 واتساب</a>
+          </div>
+        </div>
+
+        <div class="hero-side">
+          <div class="info-card">
+            <div class="stats">
+              <div class="stat">
+                <div class="label">سنوات الخبرة</div>
+                <div class="value">+20</div>
+              </div>
+              <div class="stat">
+                <div class="label">مرضى سعداء</div>
+                <div class="value">+2500</div>
+              </div>
+              <div class="stat">
+                <div class="label">تقييم المرضى</div>
+                <div class="value">4.9★</div>
+              </div>
+              <div class="stat">
+                <div class="label">حجز سهل</div>
+                <div class="value">24/7</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card quick-contact">
+            <a href="#location">
+              <span>📍 العنوان: صيدا - الشارع الرئيسي - جانب قوس البلدية ...</span>
+              <span>افتح</span>
+            </a>
+            <a href="tel:0967258766">
+              <span>📞 0967258766</span>
+              <span>اتصال</span>
+            </a>
+            <a href="https://wa.me/963967258766" target="_blank">
+              <span>💬 تواصل واتساب</span>
+              <span>فتح</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="section-card" style="display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+
+  <img src="assets/doctor.jpg" style="
+    width:160px;
+    height:160px;
+    border-radius:20px;
+    object-fit:cover;
+    border:2px solid rgba(255,255,255,0.1);
+  ">
+
+  <div>
+    <h3>👨‍⚕️ الدكتور شعلان</h3>
+
+    <p style="color:var(--muted); line-height:1.8;">
+      طبيب أسنان بخبرة أكثر من 15 سنة في مجال تجميل وزراعة الأسنان،
+      متخصص في تقديم حلول حديثة وآمنة بأعلى جودة.
+    </p>
+
+    <div style="display:flex; gap:15px; flex-wrap:wrap; margin-top:10px;">
+      <div>⭐️ 5 تقييم</div>
+      <div>👥 +1000 مريض</div>
+      <div>🦷 خبرة 15+ سنة</div>
+    </div>
+
+  </div>
+  <video controls width="100%" style="border-radius:20px;">
+  <source src="assets/doctor.mp4" type="video/mp4">
+</video>
+</div>
+    </section>
+
+    <section id="services" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h3>خدماتنا</h3>
+          <p>نقدم مجموعة من خدمات طب الأسنان العلاجية والتجميلية بما يناسب حالتك واحتياجك.</p>
+        </div>
+
+        <div class="services-grid">
+          <div class="section-card">
+            <div class="service-icon">✨</div>
+            <h4>تنظيف وتلميع الأسنان</h4>
+            <p>جلسات تنظيف احترافية لإزالة الترسبات والجير والمحافظة على صحة اللثة والابتسامة.</p>
+          </div>
+
+          <div class="section-card">
+            <div class="service-icon">🦷</div>
+            <h4>حشوات تجميلية</h4>
+            <p>حشوات بلون الأسنان الطبيعي بدقة عالية ومظهر جمالي مريح ووظيفي.</p>
+          </div>
+
+          <div class="section-card">
+            <div class="service-icon">🔬</div>
+            <h4>سحب عصب</h4>
+            <p>علاج جذور الأسنان بأدوات حديثة لتخفيف الألم والحفاظ على السن قدر الإمكان.</p>
+          </div>
+
+          <div class="section-card">
+            <div class="service-icon">😁</div>
+            <h4>تبييض الأسنان</h4>
+            <p>جلسات تبييض آمنة تعطيك ابتسامة أفتح وأكثر إشراقًا بطريقة مناسبة لحالتك.</p>
+          </div>
+
+          <div class="section-card">
+            <div class="service-icon">🛠️</div>
+            <h4>تركيبات وتيجان</h4>
+            <p>حلول تعويضية ثابتة أو تجميلية مصممة بعناية لتحسين الشكل والوظيفة معًا.</p>
+          </div>
+
+          <div class="section-card">
+  <div class="service-icon">🦷</div>
+  <h4>زرع الأسنان</h4>
+  <p>
+    تعويض الأسنان المفقودة بزرعات ثابتة وآمنة تعطيك مظهر طبيعي ووظيفة قوية مثل الأسنان الأصلية.
+  </p>
+</div>
+        </div>
+      </div>
+      
+    </section>
+
+    <section id="about" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h3>لماذا نحن؟</h3>
+          <p>نركز على الجودة والراحة والتنظيم، حتى تكون تجربة المريض سهلة وواضحة من أول تواصل.</p>
+        </div>
+
+        <div class="features-grid">
+          <div class="section-card">
+            <div class="feature-icon">🛡️</div>
+            <h4>تعقيم واهتمام</h4>
+            <p>نهتم بمعايير التعقيم والنظافة لضمان بيئة آمنة ومريحة في كل زيارة.</p>
+          </div>
+
+          <div class="section-card">
+            <div class="feature-icon">⏰</div>
+            <h4>مواعيد منظمة</h4>
+            <p>يمكنك اختيار الوقت المناسب بسهولة، مع متابعة واضحة وتأكيد للمواعيد.</p>
+          </div>
+
+          <div class="section-card">
+            <div class="feature-icon">🤝</div>
+            <h4>تجربة مريحة</h4>
+            <p>نشرح الحالة والخطة العلاجية بطريقة بسيطة وواضحة حتى تكون مطمئنًا بكل خطوة.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="reviews" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h3>آراء المرضى</h3>
+          <p>بعض الآراء التي يشاركها مرضانا عن تجربتهم معنا.</p>
+        </div>
+
+       <div id="reviewsList" class="reviews-grid"></div>
+          <div class="section-card" style="margin-top:20px;">
+  <h4>أضف تقييمك</h4>
+
+  <input id="reviewName" placeholder="اسمك"><br><br>
+
+  <select id="reviewRating">
+    <option value="5">⭐️⭐️⭐️⭐️⭐️</option>
+    <option value="4">⭐️⭐️⭐️⭐️</option>
+    <option value="3">⭐️⭐️⭐️</option>
+    <option value="2">⭐️⭐️</option>
+    <option value="1">⭐️</option>
+  </select><br><br>
+
+  <textarea id="reviewComment" placeholder="اكتب رأيك"></textarea><br><br>
+
+  <button class="btn btn-primary" onclick="addReview()">إرسال التقييم</button>
+</div>
+
+
+    <section id="location" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h3>الموقع</h3>
+          <p>يمكنك الوصول إلينا بسهولة عبر الخريطة أو من خلال معلومات التواصل المباشرة.</p>
+        </div>
+
+        <div class="contact-grid">
+          <div class="section-card">
+            <h4 style="margin-top:0;">معلومات العيادة</h4>
+            <div class="schedule-list">
+              <div class="schedule-item">
+                <span>📍 العنوان</span>
+                <span>صيدا - الشارع الرئيسي - جانب قوس البلدية ...</span>
+              </div>
+              <div class="schedule-item">
+                <span>📞 الهاتف</span>
+                <span>0967258766</span>
+              </div>
+              <div class="schedule-item">
+                <span>💬 واتساب</span>
+                <span>963967258766</span>
+              </div>
+            </div>
+
+            <div class="hero-actions" style="margin-top:16px;">
+              <a class="btn btn-primary" target="_blank" href="https://maps.google.com?q=%D8%B9%D9%8A%D8%A7%D8%AF%D8%A9%20%D8%A7%D9%84%D8%AF%D9%83%D8%AA%D9%88%D8%B1%20%D8%B4%D8%B9%D9%84%D8%A7%D9%86%D8%8C%201105%20%D8%B5%D9%8A%D8%AF%D8%A7%D8%8C%20%D8%B5%D9%8A%D8%AF%D8%A7%D8%8C%D8%8C%20%D8%B3%D9%88%D8%B1%D9%8A%D8%A7&ftid=0x151be936710d44c9:0xee440b319a7bbdc7&entry=gps&shh=CAE&lucs=,94297699,94284490,94231188,94280568,47071704,94218641,94282134,100799877,94286869&g_st=ic">افتح الخريطة</a>
+              <a class="btn btn-secondary" href="tel:0995339401">اتصال مباشر</a>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <div class="map-frame">
+    <h3>📍 موقع العيادة</h3>
+
+<iframe
+  src="https://www.google.com/maps?q=عيادة الدكتور شعلان صيدا سوريا&output=embed"
+  width="100%"
+  height="350"
+  style="border:0; border-radius:20px;"
+  loading="lazy">
+</iframe>
+
+<a href="https://maps.google.com?q=عيادة الدكتور شعلان صيدا سوريا" target="_blank">
+  فتح في Google Maps
+</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="schedule" class="section">
+      <div class="container">
+        <div class="section-head">
+          <h3>أوقات الدوام</h3>
+        </div>
+
+        <div class="services-grid">
+          <div class="section-card">
+            <h4>السبت</h4>
+            <p>10:00 صباحًا - 05:00 مساءً</p>
+          </div>
+          <div class="section-card">
+            <h4>الأحد</h4>
+            <p>10:00 صباحًا - 05:00 مساءً</p>
+          </div>
+          <div class="section-card">
+            <h4>الاثنين</h4>
+            <p>10:00 صباحًا - 05:00 مساءً</p>
+          </div>
+          <div class="section-card">
+            <h4>الثلاثاء</h4>
+            <p>10:00 صباحًا - 05:00 مساءً</p>
+          </div>
+          <div class="section-card">
+            <h4>الأربعاء</h4>
+            <p>10:00 صباحًا - 05:00 مساءً</p>
+          </div>
+          <div class="section-card">
+            <h4>الخميس</h4>
+            <p>10:00 صباحًا - 05:00 مساءً</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="booking" class="booking">
+      <div class="container">
+        <div class="section-head">
+          <h3>احجز موعدك</h3>
+          <p>اختر الوقت المناسب وأرسل طلب الحجز، وسيتم التواصل معك لتأكيد الموعد.</p>
+        </div>
+
+        <div class="booking-card">
+          <div class="booking-grid">
+            <div class="booking-side">
+              <div class="booking-note">
+                <h4>معلومات مهمة</h4>
+                <ul>
+                  <li>يرجى اختيار وقت مناسب بدقة قبل إرسال الحجز.</li>
+                  <li>سيتم التواصل معك لتأكيد الموعد بشكل نهائي.</li>
+                  <li>في حال رغبتك بالحجز السريع يمكنك التواصل عبر الهاتف أو واتساب.</li>
+                </ul>
+              </div>
+
+              <div class="booking-note">
+                <h4>الأوقات المتاحة</h4>
+                <div id="slotsList" class="slots-list"></div>
+              </div>
+            </div>
+
+            <div class="booking-form-wrap">
+              <div id="messageBox"></div>
+
+              <div class="grid">
+                <div class="field">
+                  <label>الاسم الكامل</label>
+                  <input id="fullName" type="text" placeholder="اكتب اسمك الكامل" />
+                </div>
+
+                <div class="field">
+                  <label>رقم الهاتف</label>
+                  <input id="phone" type="text" placeholder="مثال: 995339401" />
+                </div>
+
+                <div class="field full">
+                  <label>ملاحظات</label>
+                  <textarea id="notes" placeholder="أي تفاصيل إضافية للحجز"></textarea>
+                </div>
+
+                <div class="field full">
+                  <label>الوقت المختار</label>
+                  <input id="selectedSlotText" type="text" readonly />
+                </div>
+
+                <div class="field full">
+                  <button class="btn btn-primary" onclick="submitBooking()">إرسال الحجز</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-card">
+        <span>© جميع الحقوق محفوظة - عيادة Smilix</span>
+        <span>الهاتف: 0967258766</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let selectedSlotId = null;
+    let availableSlots = [];
+
+    function formatTime(time) {
+      const [hour, minute] = time.split(":");
+      let h = parseInt(hour, 10);
+      const ampm = h >= 12 ? "م" : "ص";
+      h = h % 12;
+      if (h === 0) h = 12;
+      return `${h}:${minute} ${ampm}`;
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("ar-EG", {
+        weekday: "long",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      });
+    }
+
+    function showMessage(type, text) {
+      document.getElementById("messageBox").innerHTML = `
+        <div class="message ${type}">${text}</div>
+      `;
+    }
+
+    function sendWhatsApp(phone, message) {
+      if (!phone) return;
+      phone = String(phone).replace(/\D/g, "");
+      const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+      window.open(url, "_blank");
+    }
+
+    async function loadAvailableSlots() {
+      try {
+        const res = await fetch("http://127.0.0.1:5000/api/public/available-slots");
+        const data = await res.json();
+
+        const list = document.getElementById("slotsList");
+        list.innerHTML = "";
+        availableSlots = data;
+
+        if (!data.length) {
+          list.innerHTML = `<div class="empty">لا توجد أوقات متاحة حاليًا.</div>`;
+          return;
+        }
+
+        data.forEach((slot) => {
+          const div = document.createElement("div");
+          div.className = "slot-item";
+
+          div.innerHTML = `
+            <div class="slot-date">${formatDate(slot.date)}</div>
+            <div class="slot-time">${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}</div>
+          `;
+
+          div.addEventListener("click", () => {
+            document.querySelectorAll(".slot-item").forEach((el) => el.classList.remove("active"));
+            div.classList.add("active");
+
+            selectedSlotId = slot.id;
+            document.getElementById("selectedSlotText").value =
+              `${formatDate(slot.date)} | ${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}`;
+          });
+
+          list.appendChild(div);
+        });
+      } catch (error) {
+        console.error("Load available slots error:", error);
+        document.getElementById("slotsList").innerHTML = `<div class="empty">تعذر تحميل الأوقات المتاحة.</div>`;
+      }
+    }
+
+    async function submitBooking() {
+      try {
+        const payload = {
+          fullName: document.getElementById("fullName").value.trim(),
+          phone: document.getElementById("phone").value.trim(),
+          notes: document.getElementById("notes").value.trim(),
+          slotId: selectedSlotId
+        };
+
+        if (!payload.fullName || !payload.phone || !payload.slotId) {
+          showMessage("error", "الاسم والهاتف واختيار الوقت مطلوبة.");
+          return;
+        }
+
+        const res = await fetch("http://127.0.0.1:5000/api/public/book-appointment", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showMessage("error", data.message || "تعذر إرسال الحجز.");
+          return;
+        }
+
+        showMessage("success", "تم إرسال الحجز بنجاح. سيتم التواصل معك لتأكيد الموعد.");
+
+        document.getElementById("fullName").value = "";
+        document.getElementById("phone").value = "";
+        document.getElementById("notes").value = "";
+        document.getElementById("selectedSlotText").value = "";
+        selectedSlotId = null;
+
+        await loadAvailableSlots();
+      } catch (error) {
+        console.error("Submit booking error:", error);
+        showMessage("error", "حدث خطأ أثناء إرسال الحجز.");
+      }
+    }
+async function loadReviews() {
+  const res = await fetch("http://localhost:5000/api/reviews");
+  const data = await res.json();
+
+  const box = document.getElementById("reviewsList");
+  box.innerHTML = "";
+
+  data.forEach(r => {
+    box.innerHTML += `
+      <div class="section-card">
+        <div class="review-stars">${"★".repeat(r.rating)}</div>
+        <p>${r.comment}</p>
+        <div class="review-name">${r.name}</div>
+      </div>
+    `;
+  });
+}
+async function addReview() {
+  const payload = {
+    name: document.getElementById("reviewName").value,
+    rating: document.getElementById("reviewRating").value,
+    comment: document.getElementById("reviewComment").value
+  };
+
+  await fetch("http://localhost:5000/api/reviews", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  document.getElementById("reviewName").value = "";
+  document.getElementById("reviewComment").value = "";
+
+  loadReviews();
+}
+function setupRevealAnimations() {
+  const elements = document.querySelectorAll(
+    ".section-card, .hero-card, .info-card, .booking-card, .section-head"
+  );
+
+  elements.forEach(el => el.classList.add("reveal"));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("show");
+      }
+    });
+  }, { threshold: 0.15 });
+
+  elements.forEach(el => observer.observe(el));
+}
+
+setupRevealAnimations();
+    loadAvailableSlots();
+     loadReviews();
+  </script>
+</body>
+</html>

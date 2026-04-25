@@ -1,0 +1,58 @@
+{
+  "name": "smilix",
+  "version": "1.0.0",
+  "description": "Smilix Dental System",
+  "main": "main.js",
+  "author": "Omar Aziz",
+"scripts": {
+  "start": "node src/server.js",
+  "dev": "nodemon src/server.js",
+  "electron": "electron .",
+  "dist": "electron-builder"
+},
+
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.7.0",
+    "@prisma/client": "^7.7.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.1.1",
+    "pg": "^8.20.0"
+  },
+
+  "devDependencies": {
+    "electron": "39.8.6",
+    "electron-builder": "^26.8.1",
+    "nodemon": "^3.1.14"
+  },
+
+  "build": {
+    "appId": "com.smilix.app",
+    "productName": "Smilix",
+
+    "directories": {
+      "output": "dist"
+    },
+
+    "files": [
+      "src/**/*",
+      "renderer/**/*",
+      "node_modules/**/*",
+      "main.js",
+      "package.json"
+    ],
+
+    "win": {
+      "target": "nsis",
+      "icon": "renderer/assets/icon.ico"
+    },
+
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

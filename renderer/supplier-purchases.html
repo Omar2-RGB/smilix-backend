@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smilix Supplier Purchases</title>
+  <style>
+    :root {
+      --bg-1: #07121d;
+      --bg-2: #0d2233;
+      --panel: rgba(255,255,255,0.06);
+      --line: rgba(255,255,255,0.08);
+      --text: #eef8ff;
+      --muted: #9db6ca;
+      --primary: #35a8ff;
+      --primary-2: #2ce0c7;
+      --danger: #ff5f7c;
+      --success: #36d399;
+      --warning: #ffb84d;
+      --shadow: 0 20px 50px rgba(0,0,0,0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(53,168,255,0.18), transparent 24%),
+        radial-gradient(circle at 85% 15%, rgba(44,224,199,0.10), transparent 20%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      color: var(--text);
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .brand-logo {
+      width: 68px;
+      height: 68px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(53,168,255,0.25), rgba(44,224,199,0.14));
+      border: 1px solid rgba(255,255,255,0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .brand-logo img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav-title {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 0 12px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-btn {
+      height: 52px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.25s ease;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: linear-gradient(135deg, rgba(53,168,255,0.18), rgba(44,224,199,0.12));
+      border-color: rgba(53,168,255,0.22);
+      transform: translateY(-1px);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+    }
+
+    .logout-btn {
+      width: 100%;
+      height: 48px;
+      border: none;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--danger), #ff5f7c);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .content {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      height: 44px;
+      padding: 0 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      border: none;
+      color: white;
+      font-weight: 700;
+    }
+
+    .btn.delete {
+      background: linear-gradient(135deg, var(--danger), #ff6f8c);
+      border: none;
+      color: white;
+      font-weight: 700;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 10px;
+    }
+
+    .btn.edit {
+      background: linear-gradient(135deg, #2f86ff, #55b5ff);
+      border: none;
+      color: white;
+      font-weight: 700;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 10px;
+    }
+
+    .btn.pay {
+      background: linear-gradient(135deg, var(--success), #24c48c);
+      border: none;
+      color: white;
+      font-weight: 700;
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 10px;
+    }
+
+    .btn.small {
+      height: 38px;
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 13px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .stat-card .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 220px auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .search-input,
+    .filter-select,
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      padding: 0 14px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-input,
+    .filter-select,
+    .field input,
+    .field select {
+      height: 44px;
+    }
+
+    .field textarea {
+      min-height: 90px;
+      resize: vertical;
+      padding-top: 12px;
+    }
+
+    .search-input::placeholder,
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: #9db6ca;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1400px;
+    }
+
+    th, td {
+      padding: 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    th {
+      background: rgba(255,255,255,0.04);
+      color: #dcefff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      white-space: nowrap;
+    }
+
+    .note-cell {
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .items-preview {
+      max-width: 240px;
+      line-height: 1.7;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .action-cell {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .progress-wrap {
+      min-width: 140px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--success), var(--primary-2));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 1000px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: rgba(16, 38, 56, 0.95);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+      backdrop-filter: blur(20px);
+    }
+
+    .modal.small-modal {
+      max-width: 420px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .close-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 13px;
+      color: #dcefff;
+    }
+
+    .modal-actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .items-card {
+      margin-top: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .items-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .items-table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+    }
+
+    .items-table th,
+    .items-table td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-size: 13px;
+    }
+
+    .items-table th {
+      background: rgba(255,255,255,0.04);
+      position: static;
+    }
+
+    .items-total-box {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      min-width: 220px;
+      background: linear-gradient(135deg, var(--success), #24c48c);
+      color: white;
+      padding: 14px 18px;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      z-index: 2000;
+      display: none;
+      font-weight: 700;
+    }
+
+    .toast.error {
+      background: linear-gradient(135deg, var(--danger), #ff6f8c);
+    }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .field select,
+select {
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  padding: 0 12px;
+  outline: none;
+  font-size: 14px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.field select option,
+select option {
+  background-color: #102638;
+  color: #eef8ff;
+}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="brand-logo">
+            <img src="assets/logo.png" alt="Smilix Logo" />
+          </div>
+          <div>
+            <h1>Smilix</h1>
+            <p>منصة إدارة عيادات الأسنان</p>
+          </div>
+        </div>
+
+        <div class="nav-title">القائمة الرئيسية</div>
+        <div class="nav">
+          <button class="nav-btn" onclick="goDashboard()"><span>لوحة التحكم</span><span>🏠</span></button>
+          <button class="nav-btn" onclick="goPatients()"><span>المرضى</span><span>👤</span></button>
+          <button class="nav-btn" onclick="goAppointments()"><span>المواعيد</span><span>📅</span></button>
+          <button class="nav-btn" onclick="goLab()"><span>المخبر</span><span>🧪</span></button>
+          <button class="nav-btn" onclick="goSuppliers()"><span>الموردين</span><span>🏭</span></button>
+          <button class="nav-btn active" onclick="goSupplierPurchases()"><span>مشتريات الموردين</span><span>📦</span></button>
+          <button class="nav-btn" onclick="goExpenses()"><span>المصاريف</span><span>💸</span></button>
+          <button class="nav-btn" onclick="goPayments()"><span>الدفعات</span><span>💳</span></button>
+          <button class="nav-btn" onclick="goInvoices()"><span>الفواتير</span><span>🧾</span></button>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="logout()">تسجيل الخروج</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="topbar">
+        <div>
+          <h2>📦 فواتير مشتريات الموردين</h2>
+          <p>إدارة فواتير الموردين والأصناف والدفعات والرصيد المتبقي.</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn" onclick="goSuppliers()">رجوع للموردين</button>
+          <button class="btn primary" onclick="openCreateModal()">+ إضافة فاتورة شراء</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="label">إجمالي الفواتير</div>
+            <div class="value" id="totalPurchasesValue">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">إجمالي المدفوع</div>
+            <div class="value" id="totalPaidValue">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">إجمالي الباقي</div>
+            <div class="value" id="totalRemainingValue">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">عدد الفواتير</div>
+            <div class="value" id="countValue">0</div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <input id="searchInput" class="search-input" type="text" placeholder="ابحث باسم المورد أو عنوان الفاتورة أو اسم الصنف" />
+          <select id="supplierFilter" class="filter-select">
+            <option value="">كل الموردين</option>
+          </select>
+          <button class="btn" onclick="loadSupplierPurchases()">بحث</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>المورد</th>
+                <th>عنوان الفاتورة</th>
+                <th>الأصناف</th>
+                <th>التاريخ</th>
+                <th>الإجمالي</th>
+                <th>المدفوع</th>
+                <th>الباقي</th>
+                <th>الدفع</th>
+                <th>نسبة السداد</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <div id="emptyState" class="empty" style="display:none;">لا توجد فواتير موردين بعد.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="purchaseModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 id="purchaseModalTitle">إضافة فاتورة شراء</h3>
+        <button class="close-btn" onclick="closePurchaseModal()">×</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>المورد</label>
+          <select id="supplierId"></select>
+        </div>
+
+        <div class="field">
+          <label>تاريخ الفاتورة</label>
+          <input id="purchaseDate" type="date" />
+        </div>
+
+        <div class="field full">
+          <label>عنوان الفاتورة</label>
+          <input id="title" type="text" placeholder="مثال: فاتورة مواد تنظيف / مستلزمات عيادة" />
+        </div>
+
+        <div class="field full">
+          <label>ملاحظات</label>
+          <textarea id="notes" placeholder="أي ملاحظات إضافية"></textarea>
+        </div>
+      </div>
+
+      <div class="items-card">
+        <div class="items-card-head">
+          <h4 style="margin:0;">أصناف الفاتورة</h4>
+          <button class="btn primary small" onclick="addItemRow()">+ إضافة صنف</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>اسم المادة</th>
+                <th>الكمية</th>
+                <th>سعر الوحدة</th>
+                <th>الإجمالي</th>
+                <th>حذف</th>
+              </tr>
+            </thead>
+            <tbody id="itemsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="items-total-box">
+          <span>إجمالي الفاتورة: <span id="grandTotal">0.00</span></span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn primary" onclick="saveSupplierPurchase()">حفظ</button>
+        <button class="btn" onclick="closePurchaseModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="payModal">
+    <div class="modal small-modal">
+      <div class="modal-head">
+        <h3>دفع للمورد</h3>
+        <button class="close-btn" onclick="closePayModal()">×</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field full">
+          <label>المبلغ</label>
+          <input id="payAmount" type="number" step="0.01" />
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn primary" onclick="confirmPay()">تأكيد الدفع</button>
+        <button class="btn" onclick="closePayModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const apiBase = "http://127.0.0.1:5000/api/supplier-purchases";
+    const suppliersApi = "http://127.0.0.1:5000/api/suppliers";
+
+    let allSuppliers = [];
+    let editingId = null;
+    let currentPayId = null;
+    let currentRemaining = 0;
+
+    function goDashboard() { window.location.href = "dashboard.html"; }
+    function goPatients() { window.location.href = "patients.html"; }
+    function goAppointments() { window.location.href = "appointments.html"; }
+    function goLab() { window.location.href = "lab.html"; }
+    function goSuppliers() { window.location.href = "suppliers.html"; }
+    function goSupplierPurchases() { window.location.href = "supplier-purchases.html"; }
+    function goExpenses() { window.location.href = "expenses.html"; }
+    function goPayments() { window.location.href = "payments.html"; }
+    function goInvoices() { window.location.href = "invoices.html"; }
+
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    }
+
+    function getSupplierIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("supplierId") || "";
+    }
+
+    function showToast(text, type = "success") {
+      const toast = document.getElementById("toast");
+      toast.textContent = text;
+      toast.className = type === "error" ? "toast error" : "toast";
+      toast.style.display = "block";
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 2500);
+    }
+
+    async function loadSuppliersDropdown() {
+      const res = await fetch(suppliersApi);
+      const data = await res.json();
+      allSuppliers = data;
+
+      const supplierSelect = document.getElementById("supplierId");
+      const supplierFilter = document.getElementById("supplierFilter");
+
+      supplierSelect.innerHTML = `<option value="">اختر المورد</option>`;
+      supplierFilter.innerHTML = `<option value="">كل الموردين</option>`;
+
+      data.forEach((supplier) => {
+        supplierSelect.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
+        supplierFilter.innerHTML += `<option value="${supplier.id}">${supplier.name}</option>`;
+      });
+
+      const supplierIdFromUrl = getSupplierIdFromUrl();
+      if (supplierIdFromUrl) {
+        supplierFilter.value = supplierIdFromUrl;
+        supplierSelect.value = supplierIdFromUrl;
+      }
+    }
+
+    function resetForm() {
+      document.getElementById("supplierId").value = getSupplierIdFromUrl() || "";
+      document.getElementById("purchaseDate").value = new Date().toISOString().split("T")[0];
+      document.getElementById("title").value = "";
+      document.getElementById("notes").value = "";
+      document.getElementById("itemsTableBody").innerHTML = "";
+      addItemRow();
+      updateGrandTotal();
+    }
+
+    function openCreateModal() {
+      editingId = null;
+      document.getElementById("purchaseModalTitle").textContent = "إضافة فاتورة شراء";
+      resetForm();
+      document.getElementById("purchaseModal").classList.add("show");
+    }
+
+    function closePurchaseModal() {
+      document.getElementById("purchaseModal").classList.remove("show");
+    }
+
+    function openPayModal(id, remaining) {
+      currentPayId = id;
+      currentRemaining = Number(remaining || 0);
+      document.getElementById("payAmount").value = "";
+      document.getElementById("payModal").classList.add("show");
+    }
+
+    function closePayModal() {
+      document.getElementById("payModal").classList.remove("show");
+      document.getElementById("payAmount").value = "";
+      currentPayId = null;
+      currentRemaining = 0;
+    }
+
+    function addItemRow(item = {}) {
+      const tbody = document.getElementById("itemsTableBody");
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td><input type="text" class="item-name" placeholder="اسم المادة" value="${item.itemName || ""}" /></td>
+        <td><input type="number" step="0.01" class="item-qty" value="${item.quantity ?? 1}" /></td>
+        <td><input type="number" step="0.01" class="item-price" value="${item.unitPrice ?? 0}" /></td>
+        <td><input type="number" step="0.01" class="item-total" value="${item.totalPrice ?? 0}" readonly /></td>
+        <td><button class="btn delete small" onclick="removeItemRow(this)">حذف</button></td>
+      `;
+
+      tbody.appendChild(tr);
+
+      tr.querySelector(".item-qty").addEventListener("input", () => updateRowTotal(tr));
+      tr.querySelector(".item-price").addEventListener("input", () => updateRowTotal(tr));
+
+      updateRowTotal(tr);
+    }
+
+    function removeItemRow(btn) {
+      const tbody = document.getElementById("itemsTableBody");
+      if (tbody.children.length === 1) {
+        showToast("يجب أن تحتوي الفاتورة على صنف واحد على الأقل", "error");
+        return;
+      }
+
+      btn.closest("tr").remove();
+      updateGrandTotal();
+    }
+
+    function updateRowTotal(tr) {
+      const qty = Number(tr.querySelector(".item-qty").value || 0);
+      const price = Number(tr.querySelector(".item-price").value || 0);
+      const total = qty * price;
+      tr.querySelector(".item-total").value = total.toFixed(2);
+      updateGrandTotal();
+    }
+
+    function updateGrandTotal() {
+      const rows = document.querySelectorAll("#itemsTableBody tr");
+      let grand = 0;
+
+      rows.forEach((tr) => {
+        grand += Number(tr.querySelector(".item-total").value || 0);
+      });
+
+      document.getElementById("grandTotal").textContent = grand.toFixed(2);
+    }
+
+    function collectItems() {
+      const rows = document.querySelectorAll("#itemsTableBody tr");
+      const items = [];
+
+      rows.forEach((tr) => {
+        const itemName = tr.querySelector(".item-name").value.trim();
+        const quantity = Number(tr.querySelector(".item-qty").value || 0);
+        const unitPrice = Number(tr.querySelector(".item-price").value || 0);
+
+        if (itemName && quantity > 0 && unitPrice >= 0) {
+          items.push({ itemName, quantity, unitPrice });
+        }
+      });
+
+      return items;
+    }
+
+    async function loadSupplierPurchases() {
+      try {
+        const search = document.getElementById("searchInput").value.trim().toLowerCase();
+        const supplierFilter = document.getElementById("supplierFilter").value;
+
+        const params = new URLSearchParams();
+        if (search) params.append("search", search);
+        if (supplierFilter) params.append("supplierId", supplierFilter);
+
+        const url = params.toString() ? `${apiBase}?${params.toString()}` : apiBase;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const body = document.getElementById("tableBody");
+        const emptyState = document.getElementById("emptyState");
+        body.innerHTML = "";
+
+        let totalPurchases = 0;
+        let totalPaid = 0;
+        let totalRemaining = 0;
+        let count = 0;
+
+        if (!data.length) {
+          emptyState.style.display = "block";
+        } else {
+          emptyState.style.display = "none";
+        }
+
+        data.forEach((item) => {
+          const totalAmount = Number(item.totalAmount || 0);
+          const paidAmount = Number(item.paidAmount || 0);
+          const remaining = totalAmount - paidAmount;
+          const percent = totalAmount > 0 ? Math.min((paidAmount / totalAmount) * 100, 100) : 0;
+
+          totalPurchases += totalAmount;
+          totalPaid += paidAmount;
+          totalRemaining += remaining;
+          count += 1;
+
+          const itemsPreview = (item.items || [])
+            .slice(0, 3)
+            .map(x => `${x.itemName} (${Number(x.quantity)} × ${Number(x.unitPrice)})`)
+            .join("<br>");
+
+          const hiddenCount = (item.items || []).length > 3 ? `<br>+ ${(item.items || []).length - 3} أصناف أخرى` : "";
+
+          body.innerHTML += `
+            <tr>
+              <td>${item.supplier?.name || "-"}</td>
+              <td>${item.title || "-"}</td>
+              <td class="items-preview">${itemsPreview || "-"}${hiddenCount}</td>
+              <td>${item.purchaseDate ? new Date(item.purchaseDate).toLocaleDateString("ar-EG") : "-"}</td>
+              <td>${totalAmount.toFixed(2)}</td>
+              <td>${paidAmount.toFixed(2)}</td>
+              <td>${remaining.toFixed(2)}</td>
+              <td>
+                <button class="btn pay" onclick="openPayModal(${item.id}, ${remaining})">دفع</button>
+              </td>
+              <td>
+                <div class="progress-wrap">
+                  <div class="progress-text">${percent.toFixed(0)}%</div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width:${percent}%"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="action-cell">
+                  <button class="btn edit" onclick='editPurchase(${JSON.stringify(item)})'>تعديل</button>
+                  <button class="btn delete" onclick="deletePurchase(${item.id})">حذف</button>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+
+        document.getElementById("totalPurchasesValue").textContent = totalPurchases.toFixed(2);
+        document.getElementById("totalPaidValue").textContent = totalPaid.toFixed(2);
+        document.getElementById("totalRemainingValue").textContent = totalRemaining.toFixed(2);
+        document.getElementById("countValue").textContent = count;
+      } catch (error) {
+        console.error("Load supplier purchases error:", error);
+        showToast("تعذر تحميل البيانات", "error");
+      }
+    }
+
+    function editPurchase(item) {
+      editingId = item.id;
+      document.getElementById("purchaseModalTitle").textContent = "تعديل فاتورة شراء";
+      document.getElementById("supplierId").value = item.supplierId || "";
+      document.getElementById("purchaseDate").value = item.purchaseDate ? item.purchaseDate.split("T")[0] : "";
+      document.getElementById("title").value = item.title || "";
+      document.getElementById("notes").value = item.notes || "";
+
+      const tbody = document.getElementById("itemsTableBody");
+      tbody.innerHTML = "";
+
+      if (item.items?.length) {
+        item.items.forEach((x) => addItemRow({
+          itemName: x.itemName,
+          quantity: Number(x.quantity || 0),
+          unitPrice: Number(x.unitPrice || 0),
+          totalPrice: Number(x.totalPrice || 0)
+        }));
+      } else {
+        addItemRow();
+      }
+
+      updateGrandTotal();
+      document.getElementById("purchaseModal").classList.add("show");
+    }
+
+    async function saveSupplierPurchase() {
+      try {
+        const items = collectItems();
+
+        const payload = {
+          supplierId: Number(document.getElementById("supplierId").value),
+          purchaseDate: document.getElementById("purchaseDate").value,
+          title: document.getElementById("title").value.trim(),
+          notes: document.getElementById("notes").value.trim(),
+          items
+        };
+
+        if (!payload.supplierId || !payload.title || !payload.purchaseDate) {
+          showToast("المورد والعنوان والتاريخ مطلوبة", "error");
+          return;
+        }
+
+        if (!items.length) {
+          showToast("يجب إضافة صنف واحد على الأقل", "error");
+          return;
+        }
+
+        const method = editingId ? "PUT" : "POST";
+        const url = editingId ? `${apiBase}/${editingId}` : apiBase;
+
+        const res = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.message || "فشل الحفظ", "error");
+          return;
+        }
+
+        closePurchaseModal();
+        showToast(editingId ? "تم تعديل الفاتورة" : "تمت إضافة الفاتورة");
+        loadSupplierPurchases();
+      } catch (error) {
+        console.error(error);
+        showToast("حدث خطأ أثناء الحفظ", "error");
+      }
+    }
+
+    async function confirmPay() {
+      const amount = Number(document.getElementById("payAmount").value || 0);
+
+      if (!amount || amount <= 0) {
+        showToast("أدخل مبلغ صحيح", "error");
+        return;
+      }
+
+      if (amount > currentRemaining) {
+        showToast("المبلغ أكبر من الباقي", "error");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${apiBase}/${currentPayId}/pay`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.message || "فشل الدفع", "error");
+          return;
+        }
+
+        closePayModal();
+        showToast("تم تسجيل الدفعة بنجاح");
+        loadSupplierPurchases();
+      } catch (error) {
+        console.error(error);
+        showToast("حدث خطأ أثناء الدفع", "error");
+      }
+    }
+
+    async function deletePurchase(id) {
+      const confirmed = confirm("هل أنت متأكد من حذف فاتورة الشراء؟");
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch(`${apiBase}/${id}`, { method: "DELETE" });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.message || "فشل الحذف", "error");
+          return;
+        }
+
+        showToast("تم حذف الفاتورة");
+        loadSupplierPurchases();
+      } catch (error) {
+        console.error(error);
+        showToast("حدث خطأ أثناء الحذف", "error");
+      }
+    }
+
+    document.getElementById("searchInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loadSupplierPurchases();
+    });
+
+    async function initPage() {
+      await loadSuppliersDropdown();
+      resetForm();
+      await loadSupplierPurchases();
+    }
+
+    initPage();
+  </script>
+</body>
+</html>
