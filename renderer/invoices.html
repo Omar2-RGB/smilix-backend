@@ -676,7 +676,7 @@ select option {
       window.location.href = "login.html";
     }
 protectPage("invoices");
-    const apiBase = "http://127.0.0.1:5000/api/invoices";
+    const apiBase = "https://smilix-backend.onrender.com/api/invoices";
     let editingInvoiceId = null;
     let allPatients = [];
 
@@ -722,7 +722,7 @@ protectPage("invoices");
     }
 
     async function loadPatients() {
-      const res = await fetch("http://127.0.0.1:5000/api/patients", {
+      const res = await fetch("https://smilix-backend.onrender.com/api/patients", {
         headers: {
           "Authorization": `Bearer ${token}`
         }

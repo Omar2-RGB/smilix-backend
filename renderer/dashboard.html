@@ -809,7 +809,7 @@ if (localStorage.getItem("refreshDashboard") === "true") {
 }
 async function loadAdminAlerts() {
   try {
-    const res = await fetch("http://127.0.0.1:5000/api/dashboard-alerts", {
+    const res = await fetch("https://smilix-backend.onrender.com/api/dashboard-alerts", {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -905,7 +905,7 @@ async function checkNewPendingBooking() {
   try {
     const token = localStorage.getItem("token");
 
-    const res = await fetch("http://127.0.0.1:5000/api/appointments/latest/pending", {
+    const res = await fetch("http://smilix-backend.onrender.com/api/appointments/latest/pending", {
       headers: {
         "Authorization": `Bearer ${token}`
       }
@@ -936,7 +936,7 @@ checkNewPendingBooking();
 
   async function loadDashboardData() {
     try {
-      const res = await fetch("http://127.0.0.1:5000/api/dashboard", {
+      const res = await fetch("https://smilix-backend.onrender.com/api/dashboard", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

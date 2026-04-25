@@ -610,7 +610,7 @@ select option {
     }
     protectPage("users");
 
-    const apiBase = "http://127.0.0.1:5000/api/users";
+    const apiBase = "https://smilix-backend.onrender.com/api/users";
     let editingUserId = null;
     let allUsers = [];
     let allRoles = [];
@@ -652,7 +652,7 @@ select option {
     }
 
     async function loadRoles() {
-      const res = await fetch("http://127.0.0.1:5000/api/roles", {
+      const res = await fetch("https://smilix-backend.onrender.com/api/roles", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -856,7 +856,7 @@ select option {
       }
     }
 function downloadBackup(){
-  window.open("http://localhost:5000/api/backup");
+  window.open("https://smilix-backend.onrender.com/api/backup");
 }
 
 async function restoreBackup(){

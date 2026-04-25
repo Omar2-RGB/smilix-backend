@@ -1048,7 +1048,7 @@ select option {
     }
 
     async function loadPatientInfo() {
-      const res = await fetch(`http://127.0.0.1:5000/api/patients/${patientId}`, {
+      const res = await fetch(`https://smilix-backend.onrender.com/api/patients/${patientId}`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -1061,7 +1061,7 @@ select option {
     }
 
     async function loadTreatmentTypes() {
-      const res = await fetch("http://127.0.0.1:5000/api/treatments/types", {
+      const res = await fetch("https://smilix-backend.onrender.com/api/treatments/types", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -1088,7 +1088,7 @@ select option {
 
     async function loadPatientPayments(patientId) {
       try {
-        const res = await fetch(`http://127.0.0.1:5000/api/payments?patientId=${patientId}`, {
+        const res = await fetch(`https://smilix-backend.onrender.com/api/payments?patientId=${patientId}`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
@@ -1111,7 +1111,7 @@ select option {
     }
 
     async function loadTreatments() {
-      const res = await fetch(`http://127.0.0.1:5000/api/treatments/patient/${patientId}`, {
+      const res = await fetch(`https://smilix-backend.onrender.com/api/treatments/patient/${patientId}`, {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -1241,7 +1241,7 @@ select option {
           notes
         };
 
-        const res = await fetch("http://127.0.0.1:5000/api/payments", {
+        const res = await fetch("https://smilix-backend.onrender.com/api/payments", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -1282,8 +1282,8 @@ select option {
 
         const method = editingTreatmentId ? "PUT" : "POST";
         const url = editingTreatmentId
-          ? `http://127.0.0.1:5000/api/treatments/${editingTreatmentId}`
-          : `http://127.0.0.1:5000/api/treatments`;
+          ? `https://smilix-backend.onrender.com/api/treatments/${editingTreatmentId}`
+          : `https://smilix-backend.onrender.com/api/treatments`;
 
         const res = await fetch(url, {
           method,
@@ -1311,7 +1311,7 @@ select option {
       if (!confirmed) return;
 
       try {
-        const res = await fetch(`http://127.0.0.1:5000/api/treatments/${id}`, {
+        const res = await fetch(`https://smilix-backend.onrender.com/api/treatments/${id}`, {
           method: "DELETE",
           headers: {
             "Authorization": `Bearer ${token}`

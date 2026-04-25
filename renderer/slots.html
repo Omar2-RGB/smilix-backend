@@ -165,7 +165,7 @@ select option {
   <div id="slotsList"></div>
 
   <script>
-    const API = "http://127.0.0.1:5000/api/slots";
+    const API = "https://smilix-backend.onrender.com/api/slots";
 
     async function loadSlots() {
       const res = await fetch(API);
@@ -221,7 +221,7 @@ function formatTime(time) {
     endTime
   };
 
-  const res = await fetch("http://localhost:5000/api/slots", {
+  const res = await fetch("https://smilix-backend.onrender.com/api/slots", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)

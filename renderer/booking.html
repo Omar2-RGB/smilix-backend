@@ -1082,7 +1082,7 @@ body::before {
 
     async function loadAvailableSlots() {
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/public/available-slots");
+        const res = await fetch("https://smilix-backend.onrender.com/api/public/available-slots");
         const data = await res.json();
 
         const list = document.getElementById("slotsList");
@@ -1134,7 +1134,7 @@ body::before {
           return;
         }
 
-        const res = await fetch("http://127.0.0.1:5000/api/public/book-appointment", {
+        const res = await fetch("https://smilix-backend.onrender.com/api/public/book-appointment", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -1164,7 +1164,7 @@ body::before {
       }
     }
 async function loadReviews() {
-  const res = await fetch("http://localhost:5000/api/reviews");
+  const res = await fetch("https://smilix-backend.onrender.com/api/reviews");
   const data = await res.json();
 
   const box = document.getElementById("reviewsList");
@@ -1187,7 +1187,7 @@ async function addReview() {
     comment: document.getElementById("reviewComment").value
   };
 
-  await fetch("http://localhost:5000/api/reviews", {
+  await fetch("https://smilix-backend.onrender.com/api/reviews", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)

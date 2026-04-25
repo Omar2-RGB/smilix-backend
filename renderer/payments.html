@@ -604,7 +604,7 @@ select option {
       window.location.href = "login.html";
     }
 protectPage("payments");
-    const apiBase = "http://127.0.0.1:5000/api/payments";
+    const apiBase = "https://smilix-backend.onrender.com/api/payments";
     let editingPaymentId = null;
     let allPatients = [];
     let allInvoices = [];
@@ -648,7 +648,7 @@ protectPage("payments");
     }
 
     async function loadPatients() {
-      const res = await fetch("http://127.0.0.1:5000/api/patients", {
+      const res = await fetch("https://smilix-backend.onrender.com/api/patients", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -666,7 +666,7 @@ protectPage("payments");
     }
 
     async function loadInvoices() {
-      const res = await fetch("http://127.0.0.1:5000/api/invoices", {
+      const res = await fetch("https://smilix-backend.onrender.com/api/invoices", {
         headers: {
           "Authorization": `Bearer ${token}`
         }

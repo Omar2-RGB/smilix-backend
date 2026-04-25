@@ -641,7 +641,7 @@ select option {
 
     protectPage("appointments");
 
-    const apiBase = "http://127.0.0.1:5000/api/appointments";
+    const apiBase = "https://smilix-backend.onrender.com/api/appointments";
     let editingAppointmentId = null;
     let allPatients = [];
 
@@ -693,7 +693,7 @@ select option {
     }
 
     async function loadPatientsForDropdown() {
-      const res = await fetch("http://127.0.0.1:5000/api/patients", {
+      const res = await fetch("smilix-backend.onrender.com/api/patients", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -884,7 +884,7 @@ select option {
 
    async function confirmAppointment(id) {
   try {
-    const res = await fetch(`http://localhost:5000/api/appointments/${id}/confirm`, {
+    const res = await fetch(`https://smilix-backend.onrender.com/api/appointments/${id}/confirm`, {
       method: "PUT"
     });
 
