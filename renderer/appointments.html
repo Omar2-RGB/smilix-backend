@@ -693,7 +693,7 @@ select option {
     }
 
     async function loadPatientsForDropdown() {
-      const res = await fetch("smilix-backend.onrender.com/api/patients", {
+      const res = awaitfetch("https://smilix-backend.onrender.com/api/patients", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
